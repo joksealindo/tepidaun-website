@@ -59,3 +59,13 @@ body{font-family:Bariol,Arial,Helvetica,sans-serif}
  .about-body{font-size:14px}
  .site-footer{min-height:145px}
 }
+
+/* Revision: match About paragraph sizes and compact footer */
+.about-lead{font-size:16px}
+.site-footer{min-height:88px;padding:18px 24px 16px;gap:4px}
+.site-footer img{display:none}
+.site-footer p{margin:0 0 4px}
+@media(max-width:640px){
+ .about-lead{font-size:14px}
+ .site-footer{min-height:76px;padding:14px 18px 12px}
+}
