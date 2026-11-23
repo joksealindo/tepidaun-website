@@ -413,3 +413,16 @@ select,
     line-height:1.4;
   }
 }
+
+
+/* Pillar typography: consistent compact sizing on desktop and mobile */
+.pillar-copy h2{
+  font-size:25px !important;
+}
+.pillar-copy p{
+  font-size:15px !important;
+}
+@media(max-width:640px){
+  .pillar-copy h2{font-size:25px !important}
+  .pillar-copy p{font-size:15px !important}
+}
