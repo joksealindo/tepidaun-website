@@ -509,3 +509,11 @@ select,
   font-size:20px !important;
   line-height:1;
 }
+
+
+/* Add a little extra vertical breathing room to pillar images 1, 2, and 4 */
+.pillar-card:nth-child(1)>img,
+.pillar-card:nth-child(2)>img,
+.pillar-card:nth-child(4)>img{
+  padding-block:8px;
+}
