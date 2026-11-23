@@ -426,3 +426,15 @@ select,
   .pillar-copy h2{font-size:25px !important}
   .pillar-copy p{font-size:15px !important}
 }
+
+
+/* Pillar spacing and full-width mobile cards */
+.pillars{padding-top:22px !important}
+@media(max-width:900px){
+  .pillars{padding-top:14px !important}
+}
+@media(max-width:640px){
+  .pillars{padding-top:12px !important}
+  .section-wrap{width:100% !important}
+  .pillar-grid{gap:12px !important}
+}
