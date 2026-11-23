@@ -130,3 +130,24 @@ body{padding-top:45px}
 
 /* Layout revision: hero starts immediately below the fixed header */
 .hero{margin-top:0 !important}
+
+
+/* Typography revision: Apple-style system font for all text except pillar titles */
+body,
+button,
+input,
+textarea,
+select,
+.main-nav a,
+.hero-copy,
+.section-heading,
+.pillar-copy p,
+.detail,
+.about,
+.values,
+.site-footer{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;
+}
+.pillar-copy h2{
+  font-family:Bariol,Arial,sans-serif !important;
+}
