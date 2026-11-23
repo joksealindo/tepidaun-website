@@ -527,6 +527,14 @@ select,
     gap:6px !important;
   }
   .pillar-card:nth-child(3)>img{
-    aspect-ratio:4 / 4 !important;
+    aspect-ratio:4 / 3.5 !important;
+  }
+}
+
+
+/* Mobile only: lower the text group in the third pillar card */
+@media(max-width:640px){
+  .pillar-card:nth-child(3) .pillar-copy{
+    transform:translateY(12px);
   }
 }
