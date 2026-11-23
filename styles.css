@@ -438,3 +438,30 @@ select,
   .section-wrap{width:100% !important}
   .pillar-grid{gap:12px !important}
 }
+
+
+/* Pillar image normalization: equal visual frames across all four cards */
+.pillar-card>img{
+  width:100% !important;
+  height:340px !important;
+  aspect-ratio:4 / 5;
+  object-fit:contain !important;
+  object-position:center;
+  transform:none;
+}
+
+/* Keep the same image frame on smaller screens */
+@media(max-width:900px){
+  .pillar-card>img{
+    height:280px !important;
+  }
+}
+@media(max-width:640px){
+  .pillar-card>img{
+    width:100% !important;
+    height:auto !important;
+    aspect-ratio:4 / 5 !important;
+    object-fit:contain !important;
+    object-position:center;
+  }
+}
