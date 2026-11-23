@@ -472,3 +472,25 @@ select,
   font-family:Bariol,Arial,sans-serif !important;
   font-size:12px !important;
 }
+
+
+/* Compact footer: 60px minimum height with balanced vertical spacing */
+.site-footer{
+  min-height:60px !important;
+  padding:8px 18px 7px !important;
+  gap:3px !important;
+}
+.site-footer p{
+  margin:0 !important;
+  line-height:1.15;
+}
+.site-footer small{
+  line-height:1.2;
+}
+@media(max-width:640px){
+  .site-footer{
+    min-height:60px !important;
+    padding:7px 14px 6px !important;
+    gap:3px !important;
+  }
+}
