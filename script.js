@@ -11,3 +11,13 @@ if (toggle && nav) {
   }));
 }
 document.getElementById("year").textContent = new Date().getFullYear();
+
+// Keep the compact header visible and soften its background after scrolling.
+const siteHeader = document.querySelector(".site-header");
+if (siteHeader) {
+  const updateHeaderOnScroll = () => {
+    siteHeader.classList.toggle("is-scrolled", window.scrollY > 8);
+  };
+  updateHeaderOnScroll();
+  window.addEventListener("scroll", updateHeaderOnScroll, { passive: true });
+}
