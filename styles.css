@@ -18,3 +18,44 @@
 .site-footer{min-height:190px;padding:34px 24px 26px;text-align:center;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:8px}.site-footer img{width:52px;height:58px;object-fit:contain}.site-footer p{font-size:10px;letter-spacing:.18em;margin:2px 0 10px}.site-footer small{font-size:11px;color:#777}
 @media(max-width:900px){.site-header{height:78px;padding:0 24px}.brand{width:62px;height:68px}.brand img{max-height:62px}.hero,.section-wrap{width:calc(100% - 36px)}.pillars{padding:56px 0 60px}.pillar-grid{gap:14px}.pillar-card{min-height:310px;padding:20px 12px 18px 22px;grid-template-columns:48% 52%}.pillar-copy h2{font-size:25px;margin-bottom:14px}.pillar-copy p{font-size:13px;line-height:1.5}.pillar-card>img{height:280px}.detail{font-size:11px;padding:10px 15px}}
 @media(max-width:640px){.site-header{height:68px;padding:0 18px}.brand{width:52px;height:60px}.brand img{max-height:55px}.menu-toggle{display:block;cursor:pointer}.main-nav{display:none;position:absolute;top:68px;left:0;right:0;background:#f7f7f6;padding:18px 24px 24px;flex-direction:column;align-items:flex-start;gap:18px;z-index:10;border-top:1px solid var(--line)}.main-nav.open{display:flex}.hero{width:100%;margin-top:0}.section-wrap{width:calc(100% - 28px)}.pillars{padding:48px 0 54px}.section-heading{margin-bottom:26px}.section-heading h1{font-size:34px}.section-heading>p:last-child{font-size:13px}.pillar-grid{grid-template-columns:1fr;gap:12px}.pillar-card{min-height:300px;grid-template-columns:48% 52%;padding:18px 8px 16px 20px}.pillar-copy h2{font-size:clamp(23px,7vw,30px);white-space:normal;line-height:1.05}.pillar-copy p{font-size:13px;max-width:220px;margin-bottom:18px}.pillar-card>img{height:270px}.detail{padding:9px 13px;font-size:10px;gap:9px}.about{padding:60px 24px 64px}.about h2{font-size:46px}.about-lead{font-size:21px}.about-body{font-size:14px}.values{grid-template-columns:repeat(2,1fr);gap:22px 18px;margin-top:30px;padding-top:22px}.site-footer{min-height:160px}}
+
+/* Homepage revision: compact header, hero title, and portrait pillar cards */
+body{font-family:Bariol,Arial,Helvetica,sans-serif}
+.site-header{height:70px}
+.brand{width:48px;height:58px}
+.brand img{max-height:48px}
+.hero{position:relative}
+.hero-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.04))}
+.hero-copy h1{font-family:Bariol,Arial,sans-serif;font-size:clamp(42px,5vw,68px);font-weight:700;letter-spacing:.08em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.34);margin:0 0 12px}
+.hero-copy p{max-width:760px;font-size:clamp(16px,1.6vw,22px);line-height:1.45;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.55);margin:0}
+.pillars{padding-top:54px}
+.pillar-copy h2{font-size:30px}
+.pillar-copy p{font-size:17px}
+.detail{font-size:17px}
+.about h2{font-size:32px}
+.site-footer img{width:42px;height:46px}
+@media(max-width:900px){
+ .site-header{height:64px}.brand{width:42px;height:52px}.brand img{max-height:42px}
+}
+@media(max-width:640px){
+ .site-header{height:58px}.brand{width:38px;height:48px}.brand img{max-height:38px}
+ .main-nav{top:58px}
+ .hero{width:100%;margin-top:0}
+ .hero>img{width:100%;height:360px;max-height:none;object-fit:cover}
+ .hero-copy{padding:20px}
+ .hero-copy h1{font-size:42px;margin-bottom:9px}
+ .hero-copy p{font-size:16px;max-width:330px}
+ .pillars{padding:30px 0 42px}
+ .pillar-grid{grid-template-columns:1fr;gap:16px}
+ .pillar-card{min-height:0;display:flex;flex-direction:column;align-items:stretch;padding:26px 20px 12px;gap:12px}
+ .pillar-copy{text-align:center;display:flex;flex-direction:column;align-items:center}
+ .pillar-copy h2{font-size:30px;white-space:normal;line-height:1.08;margin-bottom:10px}
+ .pillar-copy p{font-size:17px;line-height:1.45;max-width:330px;margin:0 0 14px}
+ .detail{font-size:16px;padding:9px 20px;gap:12px}
+ .pillar-card>img{display:block;width:100%;height:auto;aspect-ratio:1134/1417;object-fit:contain;object-position:center}
+ .about{padding:46px 22px 54px}
+ .about h2{font-size:28px;margin-bottom:16px}
+ .about-lead{font-size:20px}
+ .about-body{font-size:14px}
+ .site-footer{min-height:145px}
+}
