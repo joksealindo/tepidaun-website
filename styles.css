@@ -494,3 +494,18 @@ select,
     gap:3px !important;
   }
 }
+
+
+/* Pillar CTA: smaller pill background, 16px label, and a 20px chevron */
+.pillar-copy .detail{
+  display:inline-flex;
+  align-items:center;
+  gap:10px !important;
+  padding:7px 13px !important;
+  font-size:16px !important;
+  line-height:1.2;
+}
+.pillar-copy .detail span[aria-hidden="true"]{
+  font-size:20px !important;
+  line-height:1;
+}
