@@ -69,3 +69,34 @@ body{font-family:Bariol,Arial,Helvetica,sans-serif}
  .about-lead{font-size:14px}
  .site-footer{min-height:76px;padding:14px 18px 12px}
 }
+
+
+/* Header revision: compact Apple-inspired sticky translucent navigation */
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  height:45px;
+  padding:0 clamp(18px,3vw,48px);
+  background:rgba(247,247,246,.96);
+  -webkit-backdrop-filter:saturate(180%) blur(18px);
+  backdrop-filter:saturate(180%) blur(18px);
+  transition:background .25s ease, box-shadow .25s ease;
+}
+.site-header.is-scrolled{
+  background:rgba(247,247,246,.62);
+  box-shadow:0 1px 12px rgba(0,0,0,.045);
+}
+.brand{height:40px;width:40px}
+.brand img{max-height:36px}
+@media(max-width:900px){
+  .site-header{height:45px}
+  .brand{height:40px;width:38px}
+  .brand img{max-height:36px}
+}
+@media(max-width:640px){
+  .site-header{height:40px;padding:0 14px}
+  .brand{height:36px;width:34px}
+  .brand img{max-height:32px}
+  .main-nav{top:40px}
+}
