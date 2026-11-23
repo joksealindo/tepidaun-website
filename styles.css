@@ -126,3 +126,7 @@ body{padding-top:45px}
   .site-header{height:45px !important;min-height:45px;padding:0 14px}
   .main-nav{top:45px}
 }
+
+
+/* Layout revision: hero starts immediately below the fixed header */
+.hero{margin-top:0 !important}
