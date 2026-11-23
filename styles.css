@@ -517,3 +517,16 @@ select,
 .pillar-card:nth-child(4)>img{
   padding-block:8px;
 }
+
+
+/* Mobile only: make the third pillar card more compact vertically */
+@media(max-width:640px){
+  .pillar-card:nth-child(3){
+    padding-top:16px !important;
+    padding-bottom:6px !important;
+    gap:6px !important;
+  }
+  .pillar-card:nth-child(3)>img{
+    aspect-ratio:4 / 4.5 !important;
+  }
+}
