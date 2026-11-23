@@ -527,6 +527,6 @@ select,
     gap:6px !important;
   }
   .pillar-card:nth-child(3)>img{
-    aspect-ratio:4 / 4.5 !important;
+    aspect-ratio:4 / 4 !important;
   }
 }
