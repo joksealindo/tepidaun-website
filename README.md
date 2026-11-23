@@ -13,3 +13,4 @@ Buka `index.html` di browser atau jalankan server statis dari folder ini.
 
 ## Catatan
 Ini merupakan implementasi awal untuk ditinjau. Tautan halaman pilar mengarah ke folder yang akan dikembangkan pada tahap berikutnya.
+Tes koneksi Cloudflare
