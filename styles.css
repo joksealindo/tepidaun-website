@@ -465,3 +465,10 @@ select,
     object-position:center;
   }
 }
+
+
+/* Footer tagline: Bariol with a slightly larger size */
+.site-footer p{
+  font-family:Bariol,Arial,sans-serif !important;
+  font-size:12px !important;
+}
