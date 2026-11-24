@@ -48,7 +48,7 @@ body{padding-top:45px}
 .journal-heading{margin-bottom:18px}
 .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
 .journal-heading p{font-size:15px;color:var(--muted);margin:0;line-height:1.2;transform:translateY(-4px)}
-.journal-list{border-top:1px solid var(--line)}
+.journal-list{border-top:0}
 .journal-item{display:grid;grid-template-columns:clamp(150px,21vw,270px) minmax(0,1fr) 44px;gap:24px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none}
 .journal-item>img{display:block;width:100%;height:clamp(112px,13vw,170px);object-fit:cover;border-radius:10px}
 .journal-copy{display:flex;flex-direction:column;align-items:flex-start;gap:7px}
