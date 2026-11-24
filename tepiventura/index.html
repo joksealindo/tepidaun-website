@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tepidaun Adventure — pendakian, fun run, open trip, dan kegiatan outdoor. Cerita perjalanan, persiapan, dan pengalaman di alam terbuka.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Tepidaun Adventure — The Journey Continues</title>
+  <link rel="preload" href="../assets/fonts/Bariol.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="adventure-header">
+    <a class="brand" href="../" aria-label="Tepidaun — Beranda"><img src="../assets/logo/logo-tepidaun.png" alt="Tepidaun"></a>
+    <nav class="main-nav" id="main-nav" aria-label="Navigasi utama">
+      <a href="../">Tepidaun</a>
+      <a href="#activities">Aktifitas</a>
+      <a href="#journal">Adventure Journal</a>
+      <a href="#about">Tentang</a>
+    </nav>
+    <button class="menu-toggle" aria-label="Buka menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span></button>
+  </header>
+
+  <main>
+    <section class="featured" aria-label="Featured activity">
+      <img class="featured-image" src="../assets/tepiventura/semeru-mass-hiking.jpg" alt="Rombongan pendaki di Gunung Semeru" onerror="this.onerror=null;this.src='../assets/pillars/tepiventura.png'">
+      <div class="featured-shade"></div>
+      <div class="featured-copy">
+        <p class="featured-kicker">TEPIDAUN ADVENTURE</p>
+        <h1>Pendakian Massal</h1>
+        <p class="featured-caption">dulu semeru, sekarang pumapala anggota baru<br>mencoba sumbing via dukuh seman jalur yg nyaman</p>
+      </div>
+    </section>
+
+    <section class="activities section-shell" id="activities">
+      <div class="section-title-row">
+        <h2>Aktifitas</h2>
+        <div class="carousel-controls" aria-label="Kontrol kartu aktifitas">
+          <button class="carousel-arrow prev" type="button" aria-label="Geser ke kiri">←</button>
+          <button class="carousel-arrow next" type="button" aria-label="Geser ke kanan">→</button>
+        </div>
+      </div>
+      <div class="activity-track" id="activity-track" tabindex="0" aria-label="Daftar aktifitas, geser ke samping">
+        <a class="activity-card mass-hiking" href="mass-hiking/">
+          <span class="card-mark">MH</span><span class="card-bottom"><strong>Mass Hiking</strong><span class="card-link">More Details <b>↗</b></span></span>
+        </a>
+        <a class="activity-card fun-run" href="fun-run/">
+          <span class="card-mark">FR</span><span class="card-bottom"><strong>Fun Run</strong><span class="card-link">More Details <b>↗</b></span></span>
+        </a>
+        <a class="activity-card open-trip" href="open-trip/">
+          <span class="card-mark">OT</span><span class="card-bottom"><strong>Open Trip</strong><span class="card-link">More Details <b>↗</b></span></span>
+        </a>
+        <a class="activity-card fun-tektok" href="fun-tektok/">
+          <span class="card-mark">FT</span><span class="card-bottom"><strong>Fun Tektok</strong><span class="card-link">More Details <b>↗</b></span></span>
+        </a>
+        <a class="activity-end" href="#journal" aria-label="Lanjut ke Adventure Journal"><span>→</span></a>
+      </div>
+    </section>
+
+    <section class="journal section-shell" id="journal">
+      <div class="journal-heading">
+        <h2>Adventure Journal</h2>
+        <p>Stories, experiences &amp; outdoor adventures.</p>
+      </div>
+      <div class="journal-list">
+        <a class="journal-item" href="journal/persiapan-pendakian-sumbing/">
+          <img src="../assets/tepiventura/semeru-mass-hiking.jpg" alt="Perlengkapan pendakian" onerror="this.onerror=null;this.src='../assets/pillars/tepiventura.png'">
+          <span class="journal-copy"><span class="journal-category">PREPARATION</span><strong>Persiapan Pendakian Massal Gunung Sumbing</strong><span class="journal-summary">Tahap awal persiapan pendakian bersama Pumapala anggota baru, mulai dari koordinasi peserta, kesiapan fisik, perlengkapan, hingga rencana teknis jalur Dukuh Seman.</span><time datetime="2026-11-24">24 November 2026</time></span>
+          <span class="journal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="journal-item" href="journal/survei-jalur-dukuh-seman/">
+          <img src="../assets/tepiventura/semeru-mass-hiking.jpg" alt="Rombongan di jalur pendakian" onerror="this.onerror=null;this.src='../assets/pillars/tepiventura.png'">
+          <span class="journal-copy"><span class="journal-category">FIELD NOTES</span><strong>Menjelajahi Jalur Dukuh Seman</strong><span class="journal-summary">Catatan lapangan mengenai karakter jalur, kondisi perjalanan, dan hal-hal yang perlu diperhatikan sebelum pendakian.</span><time datetime="2026-11-24">24 November 2026</time></span>
+          <span class="journal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="journal-item" href="journal/cerita-semeru/">
+          <img src="../assets/tepiventura/semeru-mass-hiking.jpg" alt="Pendakian bersama di Semeru" onerror="this.onerror=null;this.src='../assets/pillars/tepiventura.png'">
+          <span class="journal-copy"><span class="journal-category">ADVENTURE STORY</span><strong>Dulu Semeru, Kini Cerita Berlanjut</strong><span class="journal-summary">Sebuah kilas balik perjalanan bersama di Semeru dan semangat yang dibawa menuju petualangan berikutnya.</span><time datetime="2026-11-24">24 November 2026</time></span>
+          <span class="journal-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="about-inner">
+        <p class="about-kicker">TEPIDAUN ADVENTURE</p>
+        <h2>Move. Explore. Experience.</h2>
+        <p>Ruang untuk bergerak, menjelajah, berbagi pengalaman, dan membangun cerita melalui kegiatan di alam terbuka.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="../">Tepidaun</a>
+    <span>Ideas for a Better Tomorrow</span>
+    <small>© <span id="year"></span> Tepidaun</small>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
