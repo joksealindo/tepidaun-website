@@ -43,7 +43,7 @@ body{padding-top:45px}
 .card-link{display:flex;align-items:center;gap:10px;color:#ffc400;font-weight:700;font-size:15px}
 .card-link b{width:28px;height:28px;border:1.5px solid currentColor;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:400}
 .activity-end{flex:0 0 76px;display:flex;align-items:center;justify-content:center;text-decoration:none;scroll-snap-align:end}
-.activity-end span{width:54px;height:54px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:300}
+.activity-end span{width:54px;height:54px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-size:38px;font-weight:400;line-height:1;padding-bottom:3px}
 .journal{padding:16px 0 78px}
 .journal-heading{margin-bottom:26px}
 .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
@@ -88,11 +88,10 @@ body{padding-top:45px}
  .carousel-arrow{width:34px;height:34px;font-size:18px}
  .activity-track{gap:12px;margin-right:-16px;padding-right:16px}
  .activity-card{flex-basis:53vw;height:104vw;max-height:410px;min-height:290px;border-radius:14px;padding:17px}
- .card-mark{top:17px;left:17px;font-size:58px}
  .card-bottom strong{font-size:23px}
  .card-link{font-size:13px}
  .activity-end{flex-basis:55px}
- .activity-end span{width:44px;height:44px;font-size:27px}
+ .activity-end span{width:44px;height:44px;font-size:34px}
  .journal{padding:8px 0 48px}
  .journal-heading{margin-bottom:18px}
  .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
