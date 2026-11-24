@@ -4,8 +4,9 @@
 html{scroll-behavior:smooth}
 body{margin:0;background:#fff;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
 a{color:inherit}
-.adventure-header{height:45px;position:fixed;inset:0 0 auto;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,58px);background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,0,0,.05)}
+.adventure-header{height:45px;position:fixed;inset:0 0 auto;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,58px);background:rgba(255,255,255,.96);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(0,0,0,.035);transition:background .25s ease,box-shadow .25s ease}
 body{padding-top:45px}
+.adventure-header.is-scrolled{background:rgba(255,255,255,.62);box-shadow:0 1px 12px rgba(0,0,0,.045)}
 .brand{height:36px;width:48px;display:flex;align-items:center}
 .brand img{max-width:100%;max-height:34px;object-fit:contain}
 .main-nav{display:flex;align-items:center;gap:clamp(22px,3vw,46px)}
@@ -16,20 +17,20 @@ body{padding-top:45px}
 .featured-image{width:100%;height:100%;display:block;object-fit:cover;object-position:center 55%}
 .featured-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.12) 62%,rgba(0,0,0,.02)),linear-gradient(0deg,rgba(0,0,0,.24),transparent 45%)}
 .featured-copy{position:absolute;left:clamp(24px,6vw,92px);top:50%;transform:translateY(-50%);color:#fff;max-width:760px}
-.featured-copy h1{font-family:"Montserrat",Arial,Helvetica,sans-serif;font-size:clamp(42px,6.6vw,88px);line-height:.98;letter-spacing:-.035em;margin:0 0 18px;font-weight:900}
-.featured-caption{font-family:Arial,Helvetica,sans-serif;font-size:clamp(14px,1.45vw,19px);line-height:1.55;margin:0;font-weight:500}
+.featured-copy h1{font-family:"Montserrat",Arial,Helvetica,sans-serif;font-size:clamp(38px,5.9vw,78px);line-height:.98;letter-spacing:-.035em;margin:0 0 14px;font-weight:900}
+.featured-caption{font-family:Arial,Helvetica,sans-serif;font-size:clamp(12px,1.2vw,16px);line-height:1.5;margin:0;font-weight:400;transform:translateY(-4px)}
 .section-shell{width:min(100% - 64px,1440px);margin-inline:auto}
 .activities{padding:58px 0 68px}
 .section-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
 .section-title-row h2,.journal-heading h2{font-family:"Montserrat",Arial,Helvetica,sans-serif;font-weight:800;font-size:clamp(36px,4.2vw,58px);letter-spacing:-.035em;margin:0;color:#efa900}
 .section-heading-copy h2{margin:0}
-.section-heading-copy p{font-size:15px;color:var(--muted);margin:7px 0 0;line-height:1.5}
+.section-heading-copy p{font-size:15px;color:var(--muted);margin:3px 0 0;line-height:1.5}
 .carousel-controls{display:flex;gap:8px}
 .carousel-arrow{width:42px;height:42px;border:1px solid #111;border-radius:50%;background:#fff;font-size:22px;cursor:pointer;transition:.2s}
 .carousel-arrow:hover{background:#111;color:#fff}
 .activity-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 0 10px}
 .activity-track::-webkit-scrollbar{display:none}
-.activity-card{position:relative;flex:0 0 clamp(190px,18vw,250px);height:clamp(340px,36vw,470px);border-radius:18px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;padding:22px;background:linear-gradient(160deg,#7296a4,#253c34 72%,#111);scroll-snap-align:start}
+.activity-card{position:relative;flex:0 0 clamp(175px,16vw,220px);height:clamp(340px,36vw,470px);border-radius:18px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;padding:22px;background:linear-gradient(160deg,#7296a4,#253c34 72%,#111);scroll-snap-align:start}
 .activity-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02) 25%,rgba(0,0,0,.76) 100%);transition:background .25s}
 .activity-card:hover:before{background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.86))}
 .mass-hiking{background:linear-gradient(145deg,#8da7a0 0%,#405d4a 52%,#18251d 100%)}
@@ -77,16 +78,16 @@ body{padding-top:45px}
  .featured-shade{background:linear-gradient(90deg,rgba(0,0,0,.42),rgba(0,0,0,.08)),linear-gradient(0deg,rgba(0,0,0,.22),transparent 55%)}
  .featured-copy{left:22px;right:20px;top:auto;bottom:28px;transform:none}
  .featured-kicker{font-size:9px;margin-bottom:10px}
- .featured-copy h1{font-size:clamp(36px,10vw,54px);margin-bottom:10px}
- .featured-caption{font-size:13px;line-height:1.45}
+ .featured-copy h1{font-size:clamp(33px,9vw,49px);margin-bottom:10px}
+ .featured-caption{font-size:11px;line-height:1.45;transform:translateY(-3px)}
  .section-shell{width:calc(100% - 32px)}
  .activities{padding:34px 0 42px}
  .section-title-row{margin-bottom:17px}
  .section-title-row h2{font-size:36px}
- .section-heading-copy p{font-size:12px;margin-top:6px}
+ .section-heading-copy p{font-size:12px;margin-top:2px}
  .carousel-arrow{width:34px;height:34px;font-size:18px}
  .activity-track{gap:12px;margin-right:-16px;padding-right:16px}
- .activity-card{flex-basis:62vw;height:104vw;max-height:410px;min-height:290px;border-radius:14px;padding:17px}
+ .activity-card{flex-basis:57vw;height:104vw;max-height:410px;min-height:290px;border-radius:14px;padding:17px}
  .card-mark{top:17px;left:17px;font-size:58px}
  .card-bottom strong{font-size:23px}
  .card-link{font-size:13px}
