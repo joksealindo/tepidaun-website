@@ -81,12 +81,12 @@ body{padding-top:45px}
  .featured-copy h1{font-size:clamp(34px,8.5vw,46px);margin-bottom:9px}
  .featured-caption{font-size:13px;line-height:1.45;transform:translateY(-3px);font-weight:400}
  .section-shell{width:calc(100% - 32px)}
- .activities{padding:34px 0 18px}
+ .activities{padding:34px 0 0}
  .section-title-row{margin-bottom:13px}
  .section-title-row h2{font-size:30px}
  .section-heading-copy p{font-size:12px;margin-top:0;line-height:1.2;transform:translateY(-3px)}
  .carousel-arrow{width:34px;height:34px;font-size:18px}
- .activity-track{gap:12px;margin-right:-16px;padding-right:16px}
+ .activity-track{gap:12px;margin-right:-16px;padding:0 16px 3px 0}
  .activity-card{flex-basis:53vw;height:104vw;max-height:410px;min-height:290px;border-radius:14px;padding:17px}
  .card-bottom strong{font-size:23px}
  .card-link{font-size:13px;font-weight:400}
