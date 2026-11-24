@@ -20,3 +20,10 @@ if(track&&prev&&next){
   prev.addEventListener("click",()=>track.scrollBy({left:-distance(),behavior:"smooth"}));
   next.addEventListener("click",()=>track.scrollBy({left:distance(),behavior:"smooth"}));
 }
+
+const adventureHeader=document.querySelector(".adventure-header");
+if(adventureHeader){
+  const updateAdventureHeader=()=>adventureHeader.classList.toggle("is-scrolled",window.scrollY>8);
+  updateAdventureHeader();
+  window.addEventListener("scroll",updateAdventureHeader,{passive:true});
+}
