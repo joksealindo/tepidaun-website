@@ -28,7 +28,7 @@ body{padding-top:45px}
 .carousel-controls{display:flex;gap:8px}
 .carousel-arrow{width:42px;height:42px;border:1px solid #111;border-radius:50%;background:#fff;font-size:22px;cursor:pointer;transition:.2s}
 .carousel-arrow:hover{background:#111;color:#fff}
-.activity-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 0 10px}
+.activity-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 0 10px}
 .activity-track::-webkit-scrollbar{display:none}
 .activity-card{position:relative;flex:0 0 250px;height:550px;border-radius:18px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;padding:22px;background:linear-gradient(160deg,#7296a4,#253c34 72%,#111);scroll-snap-align:start}
 .activity-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02) 25%,rgba(0,0,0,.76) 100%);transition:background .25s}
