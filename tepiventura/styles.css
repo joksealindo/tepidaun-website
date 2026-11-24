@@ -16,19 +16,20 @@ body{padding-top:45px}
 .featured-image{width:100%;height:100%;display:block;object-fit:cover;object-position:center 55%}
 .featured-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.12) 62%,rgba(0,0,0,.02)),linear-gradient(0deg,rgba(0,0,0,.24),transparent 45%)}
 .featured-copy{position:absolute;left:clamp(24px,6vw,92px);top:50%;transform:translateY(-50%);color:#fff;max-width:760px}
-.featured-kicker{font-size:11px;letter-spacing:.2em;font-weight:700;margin:0 0 18px}
-.featured-copy h1{font-family:"Arial Black",Arial,Helvetica,sans-serif;font-size:clamp(42px,6.6vw,88px);line-height:.98;letter-spacing:-.035em;margin:0 0 18px;font-weight:900}
+.featured-copy h1{font-family:"Montserrat",Arial,Helvetica,sans-serif;font-size:clamp(42px,6.6vw,88px);line-height:.98;letter-spacing:-.035em;margin:0 0 18px;font-weight:900}
 .featured-caption{font-family:Arial,Helvetica,sans-serif;font-size:clamp(14px,1.45vw,19px);line-height:1.55;margin:0;font-weight:500}
 .section-shell{width:min(100% - 64px,1440px);margin-inline:auto}
 .activities{padding:58px 0 68px}
 .section-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.section-title-row h2,.journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:900;font-size:clamp(36px,4.2vw,58px);letter-spacing:-.035em;margin:0;color:#efa900}
+.section-title-row h2,.journal-heading h2{font-family:"Montserrat",Arial,Helvetica,sans-serif;font-weight:800;font-size:clamp(36px,4.2vw,58px);letter-spacing:-.035em;margin:0;color:#efa900}
+.section-heading-copy h2{margin:0}
+.section-heading-copy p{font-size:15px;color:var(--muted);margin:7px 0 0;line-height:1.5}
 .carousel-controls{display:flex;gap:8px}
 .carousel-arrow{width:42px;height:42px;border:1px solid #111;border-radius:50%;background:#fff;font-size:22px;cursor:pointer;transition:.2s}
 .carousel-arrow:hover{background:#111;color:#fff}
 .activity-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 0 10px}
 .activity-track::-webkit-scrollbar{display:none}
-.activity-card{position:relative;flex:0 0 clamp(220px,23vw,320px);height:clamp(270px,30vw,390px);border-radius:18px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;padding:22px;background:linear-gradient(160deg,#7296a4,#253c34 72%,#111);scroll-snap-align:start}
+.activity-card{position:relative;flex:0 0 clamp(190px,18vw,250px);height:clamp(340px,36vw,470px);border-radius:18px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;padding:22px;background:linear-gradient(160deg,#7296a4,#253c34 72%,#111);scroll-snap-align:start}
 .activity-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02) 25%,rgba(0,0,0,.76) 100%);transition:background .25s}
 .activity-card:hover:before{background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.86))}
 .mass-hiking{background:linear-gradient(145deg,#8da7a0 0%,#405d4a 52%,#18251d 100%)}
@@ -82,9 +83,10 @@ body{padding-top:45px}
  .activities{padding:34px 0 42px}
  .section-title-row{margin-bottom:17px}
  .section-title-row h2{font-size:36px}
+ .section-heading-copy p{font-size:12px;margin-top:6px}
  .carousel-arrow{width:34px;height:34px;font-size:18px}
  .activity-track{gap:12px;margin-right:-16px;padding-right:16px}
- .activity-card{flex-basis:72vw;height:94vw;max-height:350px;min-height:250px;border-radius:14px;padding:17px}
+ .activity-card{flex-basis:62vw;height:104vw;max-height:410px;min-height:290px;border-radius:14px;padding:17px}
  .card-mark{top:17px;left:17px;font-size:58px}
  .card-bottom strong{font-size:23px}
  .card-link{font-size:13px}
