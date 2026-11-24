@@ -45,11 +45,11 @@ body{padding-top:45px}
 .activity-end{flex:0 0 76px;display:flex;align-items:center;justify-content:center;text-decoration:none;scroll-snap-align:end}
 .activity-end span{width:54px;height:54px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-size:38px;font-weight:400;line-height:1;padding-bottom:3px}
 .journal{padding:16px 0 78px}
-.journal-heading{margin-bottom:18px}
+.journal-heading{margin-bottom:8px}
 .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
 .journal-heading p{font-size:15px;color:var(--muted);margin:0;line-height:1.2;transform:translateY(-4px)}
 .journal-list{border-top:1px solid var(--line)}
-.journal-item{display:grid;grid-template-columns:clamp(150px,21vw,270px) minmax(0,1fr) 44px;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.journal-item{display:grid;grid-template-columns:clamp(150px,21vw,270px) minmax(0,1fr) 44px;gap:24px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none}
 .journal-item>img{display:block;width:100%;height:clamp(112px,13vw,170px);object-fit:cover;border-radius:10px}
 .journal-copy{display:flex;flex-direction:column;align-items:flex-start;gap:7px}
 .journal-category{font-size:10px;font-weight:800;letter-spacing:.12em;color:#9a7000}
@@ -94,10 +94,10 @@ body{padding-top:45px}
  .activity-end{flex-basis:55px}
  .activity-end span{width:44px;height:44px;font-size:34px}
  .journal{padding:8px 0 48px}
- .journal-heading{margin-bottom:14px}
+ .journal-heading{margin-bottom:8px}
  .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
  .journal-heading p{font-size:12px;line-height:1.2;transform:translateY(-3px)}
- .journal-item{grid-template-columns:112px minmax(0,1fr) 28px;gap:12px;padding:14px 0}
+ .journal-item{grid-template-columns:112px minmax(0,1fr) 28px;gap:12px;padding:10px 0}
  .journal-item>img{height:104px;border-radius:7px}
  .journal-copy{gap:5px}
  .journal-category{font-size:8px}
