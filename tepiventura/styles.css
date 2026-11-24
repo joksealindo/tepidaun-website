@@ -20,7 +20,7 @@ body{padding-top:45px}
 .featured-copy h1{font-family:"Montserrat",Arial,Helvetica,sans-serif;font-size:clamp(36px,5.3vw,70px);line-height:.9;letter-spacing:-.035em;margin:0 0 12px;font-weight:900}
 .featured-caption{font-family:"Montserrat",Arial,Helvetica,sans-serif;font-size:clamp(15px,1.45vw,19px);line-height:1.45;margin:0;font-weight:300;letter-spacing:.005em;transform:translateY(-4px);opacity:.96}
 .section-shell{width:min(100% - 64px,1440px);margin-inline:auto}
-.activities{padding:58px 0 68px}
+.activities{padding:58px 0 36px}
 .section-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .section-title-row h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111;text-transform:none}\n.journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
 .section-heading-copy h2{margin:0}
@@ -44,8 +44,8 @@ body{padding-top:45px}
 .card-link b{width:auto;height:auto;border:0;border-radius:0;display:inline-flex;align-items:center;justify-content:center;font-size:21px;font-weight:400;line-height:1}
 .activity-end{flex:0 0 76px;display:flex;align-items:center;justify-content:center;text-decoration:none;scroll-snap-align:end}
 .activity-end span{width:54px;height:54px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;font-size:38px;font-weight:400;line-height:1;padding-bottom:3px}
-.journal{padding:16px 0 78px}
-.journal-heading{margin-bottom:8px}
+.journal{padding:8px 0 78px}
+.journal-heading{margin-bottom:18px}
 .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
 .journal-heading p{font-size:15px;color:var(--muted);margin:0;line-height:1.2;transform:translateY(-4px)}
 .journal-list{border-top:1px solid var(--line)}
@@ -81,7 +81,7 @@ body{padding-top:45px}
  .featured-copy h1{font-size:clamp(34px,8.5vw,46px);margin-bottom:9px}
  .featured-caption{font-size:13px;line-height:1.45;transform:translateY(-3px);font-weight:400}
  .section-shell{width:calc(100% - 32px)}
- .activities{padding:34px 0 42px}
+ .activities{padding:34px 0 26px}
  .section-title-row{margin-bottom:13px}
  .section-title-row h2{font-size:30px}
  .section-heading-copy p{font-size:12px;margin-top:0;line-height:1.2;transform:translateY(-3px)}
@@ -93,8 +93,8 @@ body{padding-top:45px}
  .card-link b{font-size:19px}
  .activity-end{flex-basis:55px}
  .activity-end span{width:44px;height:44px;font-size:34px}
- .journal{padding:8px 0 48px}
- .journal-heading{margin-bottom:8px}
+ .journal{padding:4px 0 48px}
+ .journal-heading{margin-bottom:18px}
  .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
  .journal-heading p{font-size:12px;line-height:1.2;transform:translateY(-3px)}
  .journal-item{grid-template-columns:112px minmax(0,1fr) 28px;gap:12px;padding:10px 0}
