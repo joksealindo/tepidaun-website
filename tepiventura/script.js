@@ -27,3 +27,43 @@ if(adventureHeader){
   updateAdventureHeader();
   window.addEventListener("scroll",updateAdventureHeader,{passive:true});
 }
+
+/* Desktop mouse drag for the horizontal activity cards; touch scrolling stays native. */
+if(track){
+  let isDragging=false;
+  let startX=0;
+  let startScrollLeft=0;
+  let moved=false;
+  track.addEventListener("mousedown",event=>{
+    if(event.button!==0) return;
+    isDragging=true;
+    moved=false;
+    startX=event.pageX;
+    startScrollLeft=track.scrollLeft;
+    track.classList.add("is-dragging");
+  });
+  window.addEventListener("mousemove",event=>{
+    if(!isDragging) return;
+    const delta=event.pageX-startX;
+    if(Math.abs(delta)>4) moved=true;
+    if(moved){
+      event.preventDefault();
+      track.scrollLeft=startScrollLeft-delta;
+    }
+  });
+  window.addEventListener("mouseup",()=>{
+    if(!isDragging) return;
+    isDragging=false;
+    track.classList.remove("is-dragging");
+    if(moved){
+      track.dataset.dragged="true";
+      window.setTimeout(()=>delete track.dataset.dragged,0);
+    }
+  });
+  track.addEventListener("click",event=>{
+    if(track.dataset.dragged==="true"){
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  },true);
+}
