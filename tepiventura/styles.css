@@ -30,6 +30,7 @@ body{padding-top:45px}
 .carousel-arrow:hover{background:#111;color:#fff}
 .activity-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:0 0 10px}
 .activity-track::-webkit-scrollbar{display:none}
+@media(min-width:701px){.activity-track{cursor:grab;user-select:none}.activity-track.is-dragging{cursor:grabbing}.activity-track img{-webkit-user-drag:none}}
 .activity-card{position:relative;flex:0 0 250px;height:550px;border-radius:18px;overflow:hidden;text-decoration:none;color:#fff;display:flex;align-items:flex-end;padding:22px;background:linear-gradient(160deg,#7296a4,#253c34 72%,#111);scroll-snap-align:start}
 .activity-card:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02) 25%,rgba(0,0,0,.76) 100%);transition:background .25s}
 .activity-card:hover:before{background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.86))}
