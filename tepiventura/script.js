@@ -12,14 +12,6 @@ if(menuToggle&&mainNav){
 }
 const year=document.getElementById("year");
 if(year) year.textContent=new Date().getFullYear();
-const track=document.getElementById("activity-track");
-const prev=document.querySelector(".carousel-arrow.prev");
-const next=document.querySelector(".carousel-arrow.next");
-if(track&&prev&&next){
-  const distance=()=>Math.max(240,Math.round(track.clientWidth*.72));
-  prev.addEventListener("click",()=>track.scrollBy({left:-distance(),behavior:"smooth"}));
-  next.addEventListener("click",()=>track.scrollBy({left:distance(),behavior:"smooth"}));
-}
 
 const adventureHeader=document.querySelector(".adventure-header");
 if(adventureHeader){
@@ -28,103 +20,117 @@ if(adventureHeader){
   window.addEventListener("scroll",updateAdventureHeader,{passive:true});
 }
 
-/* Desktop-only draggable carousel with momentum. Touch devices keep native scrolling. */
+/* Desktop carousel: frame-synced drag and glide. Mobile remains native touch scroll. */
+const track=document.getElementById("activity-track");
 if(track){
-  let dragging=false;
-  let moved=false;
+  let pointerId=null;
   let startX=0;
   let startScroll=0;
-  let lastX=0;
-  let lastTime=0;
+  let targetScroll=0;
   let velocity=0;
-  let animationFrame=0;
-  let suppressClickTimer=0;
+  let dragging=false;
+  let didMove=false;
+  let frame=0;
+  let glideFrame=0;
+  let suppressClickUntil=0;
+  const samples=[];
 
-  const restoreSnap=()=>{track.style.scrollSnapType="";};
-  const stopMomentum=()=>{
-    if(animationFrame) cancelAnimationFrame(animationFrame);
-    animationFrame=0;
-    track.classList.remove("is-inertia");
-    restoreSnap();
+  const clampScroll=value=>Math.max(0,Math.min(value,track.scrollWidth-track.clientWidth));
+  const stopFrames=()=>{
+    if(frame) cancelAnimationFrame(frame);
+    if(glideFrame) cancelAnimationFrame(glideFrame);
+    frame=0;
+    glideFrame=0;
   };
-
-  const runMomentum=()=>{
-    let previousTime=performance.now();
-    const friction=0.0042;
-    const tick=now=>{
-      const elapsed=Math.min(32,now-previousTime);
-      previousTime=now;
-      track.scrollLeft+=velocity*elapsed;
-      velocity*=Math.exp(-friction*elapsed);
-      if(Math.abs(velocity)>.025){
-        animationFrame=requestAnimationFrame(tick);
+  const renderDrag=()=>{
+    frame=0;
+    if(!dragging) return;
+    const difference=targetScroll-track.scrollLeft;
+    if(Math.abs(difference)>.15){
+      track.scrollLeft+=difference*.88;
+      frame=requestAnimationFrame(renderDrag);
+    }else{
+      track.scrollLeft=targetScroll;
+    }
+  };
+  const glide=()=>{
+    let previous=performance.now();
+    const friction=.0036;
+    const step=now=>{
+      const dt=Math.min(32,now-previous);
+      previous=now;
+      const next=clampScroll(track.scrollLeft+velocity*dt);
+      track.scrollLeft=next;
+      velocity*=Math.exp(-friction*dt);
+      if(Math.abs(velocity)>.018&&next>0&&next<track.scrollWidth-track.clientWidth){
+        glideFrame=requestAnimationFrame(step);
       }else{
-        animationFrame=0;
-        track.classList.remove("is-inertia");
-        restoreSnap();
+        glideFrame=0;
+        track.classList.remove("is-gliding");
       }
     };
-    track.classList.add("is-inertia");
-    animationFrame=requestAnimationFrame(tick);
+    track.classList.add("is-gliding");
+    glideFrame=requestAnimationFrame(step);
   };
 
   track.addEventListener("pointerdown",event=>{
     if(event.pointerType!=="mouse"||event.button!==0) return;
-    stopMomentum();
+    stopFrames();
+    pointerId=event.pointerId;
     dragging=true;
-    moved=false;
+    didMove=false;
     startX=event.clientX;
     startScroll=track.scrollLeft;
-    lastX=event.clientX;
-    lastTime=performance.now();
+    targetScroll=startScroll;
     velocity=0;
-    track.style.scrollSnapType="none";
+    samples.length=0;
+    samples.push({x:event.clientX,t:performance.now()});
     track.classList.add("is-dragging");
-    track.setPointerCapture(event.pointerId);
+    track.style.scrollSnapType="none";
+    track.setPointerCapture(pointerId);
   });
 
   track.addEventListener("pointermove",event=>{
-    if(!dragging||event.pointerType!=="mouse") return;
+    if(!dragging||event.pointerId!==pointerId) return;
     const delta=event.clientX-startX;
-    if(Math.abs(delta)>4) moved=true;
-    if(moved){
-      event.preventDefault();
-      track.scrollLeft=startScroll-delta;
-      const now=performance.now();
-      const elapsed=now-lastTime;
-      if(elapsed>0){
-        const instantVelocity=-(event.clientX-lastX)/elapsed;
-        velocity=velocity*.35+instantVelocity*.65;
-      }
-      lastX=event.clientX;
-      lastTime=now;
+    if(Math.abs(delta)>3) didMove=true;
+    if(!didMove) return;
+    event.preventDefault();
+    targetScroll=clampScroll(startScroll-delta);
+    if(!frame) frame=requestAnimationFrame(renderDrag);
+
+    const now=performance.now();
+    samples.push({x:event.clientX,t:now});
+    while(samples.length>2&&now-samples[0].t>90) samples.shift();
+    if(samples.length>=2){
+      const first=samples[0],last=samples[samples.length-1];
+      const elapsed=last.t-first.t;
+      if(elapsed>0) velocity=-(last.x-first.x)/elapsed;
     }
   });
 
-  const finishDrag=event=>{
-    if(!dragging) return;
+  const endDrag=event=>{
+    if(!dragging||event.pointerId!==pointerId) return;
     dragging=false;
     track.classList.remove("is-dragging");
-    if(moved){
-      track.dataset.dragged="true";
-      clearTimeout(suppressClickTimer);
-      suppressClickTimer=setTimeout(()=>delete track.dataset.dragged,180);
-      if(Math.abs(velocity)>.025) runMomentum();
-      else restoreSnap();
-    }else{
-      restoreSnap();
+    if(frame){cancelAnimationFrame(frame);frame=0;}
+    track.scrollLeft=targetScroll;
+    if(didMove){
+      suppressClickUntil=performance.now()+250;
+      if(Math.abs(velocity)>.025) glide();
     }
-    if(event&&track.hasPointerCapture(event.pointerId)){
-      track.releasePointerCapture(event.pointerId);
-    }
+    pointerId=null;
   };
-
-  track.addEventListener("pointerup",finishDrag);
-  track.addEventListener("pointercancel",finishDrag);
+  track.addEventListener("pointerup",endDrag);
+  track.addEventListener("pointercancel",endDrag);
+  track.addEventListener("lostpointercapture",event=>{
+    if(dragging) endDrag(event);
+  });
   track.addEventListener("click",event=>{
-    if(track.dataset.dragged==="true"){
+    if(performance.now()<suppressClickUntil){
       event.preventDefault();
       event.stopPropagation();
     }
   },true);
+  track.addEventListener("dragstart",event=>event.preventDefault());
 }
