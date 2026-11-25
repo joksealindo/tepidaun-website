@@ -28,38 +28,91 @@ if(adventureHeader){
   window.addEventListener("scroll",updateAdventureHeader,{passive:true});
 }
 
-/* Desktop mouse drag for the horizontal activity cards; touch scrolling stays native. */
+/* Desktop-only draggable carousel with momentum. Touch devices keep native scrolling. */
 if(track){
-  let isDragging=false;
-  let startX=0;
-  let startScrollLeft=0;
+  let dragging=false;
   let moved=false;
-  track.addEventListener("mousedown",event=>{
-    if(event.button!==0) return;
-    isDragging=true;
+  let startX=0;
+  let startScroll=0;
+  let lastX=0;
+  let lastTime=0;
+  let velocity=0;
+  let animationFrame=0;
+  let suppressClickTimer=0;
+
+  const stopMomentum=()=>{
+    if(animationFrame) cancelAnimationFrame(animationFrame);
+    animationFrame=0;
+  };
+
+  const runMomentum=()=>{
+    let previousTime=performance.now();
+    const friction=0.0042;
+    const tick=now=>{
+      const elapsed=Math.min(32,now-previousTime);
+      previousTime=now;
+      track.scrollLeft+=velocity*elapsed;
+      velocity*=Math.exp(-friction*elapsed);
+      if(Math.abs(velocity)>.025){
+        animationFrame=requestAnimationFrame(tick);
+      }else{
+        animationFrame=0;
+        track.classList.remove("is-inertia");
+      }
+    };
+    track.classList.add("is-inertia");
+    animationFrame=requestAnimationFrame(tick);
+  };
+
+  track.addEventListener("pointerdown",event=>{
+    if(event.pointerType!=="mouse"||event.button!==0) return;
+    stopMomentum();
+    dragging=true;
     moved=false;
-    startX=event.pageX;
-    startScrollLeft=track.scrollLeft;
+    startX=event.clientX;
+    startScroll=track.scrollLeft;
+    lastX=event.clientX;
+    lastTime=performance.now();
+    velocity=0;
     track.classList.add("is-dragging");
+    track.setPointerCapture(event.pointerId);
   });
-  window.addEventListener("mousemove",event=>{
-    if(!isDragging) return;
-    const delta=event.pageX-startX;
+
+  track.addEventListener("pointermove",event=>{
+    if(!dragging||event.pointerType!=="mouse") return;
+    const delta=event.clientX-startX;
     if(Math.abs(delta)>4) moved=true;
     if(moved){
       event.preventDefault();
-      track.scrollLeft=startScrollLeft-delta;
+      track.scrollLeft=startScroll-delta;
+      const now=performance.now();
+      const elapsed=now-lastTime;
+      if(elapsed>0){
+        const instantVelocity=-(event.clientX-lastX)/elapsed;
+        velocity=velocity*.35+instantVelocity*.65;
+      }
+      lastX=event.clientX;
+      lastTime=now;
     }
   });
-  window.addEventListener("mouseup",()=>{
-    if(!isDragging) return;
-    isDragging=false;
+
+  const finishDrag=event=>{
+    if(!dragging) return;
+    dragging=false;
     track.classList.remove("is-dragging");
     if(moved){
       track.dataset.dragged="true";
-      window.setTimeout(()=>delete track.dataset.dragged,0);
+      clearTimeout(suppressClickTimer);
+      suppressClickTimer=setTimeout(()=>delete track.dataset.dragged,180);
+      if(Math.abs(velocity)>.025) runMomentum();
     }
-  });
+    if(event&&track.hasPointerCapture(event.pointerId)){
+      track.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  track.addEventListener("pointerup",finishDrag);
+  track.addEventListener("pointercancel",finishDrag);
   track.addEventListener("click",event=>{
     if(track.dataset.dragged==="true"){
       event.preventDefault();
