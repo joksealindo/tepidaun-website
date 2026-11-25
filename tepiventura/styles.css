@@ -70,9 +70,11 @@ body{padding-top:45px}
 .about-kicker{font-size:10px;letter-spacing:.2em;font-weight:700;color:#777;margin:0 0 12px}
 .about h2{font-family:Arial,Helvetica,sans-serif;font-size:clamp(30px,3.2vw,38px);font-weight:700;margin:0 0 12px;letter-spacing:-.03em}
 .about-inner>p:last-child{max-width:650px;color:#555;line-height:1.7;margin:0}
-.site-footer{min-height:82px;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:#777}
-.site-footer a{text-decoration:none;font-family:Bariol,Arial,sans-serif;font-size:20px;color:#111}
-.site-footer span{text-transform:uppercase;letter-spacing:.14em;font-size:9px}
+.site-footer{min-height:60px;padding:8px 18px 7px;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:3px;text-align:center;font-size:11px;color:#777}
+.site-footer img{display:none}
+.site-footer p{font-family:Bariol,Arial,sans-serif;font-size:12px;letter-spacing:.18em;margin:0;line-height:1.15}
+.site-footer small{font-size:11px;color:#777;line-height:1.2}
+@media(max-width:640px){.site-footer{min-height:60px;padding:7px 14px 6px}}
 .menu-toggle{border:0;background:transparent}
 @media(max-width:700px){
  .adventure-header{height:45px;padding:0 15px}.brand{width:39px}
