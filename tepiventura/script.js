@@ -40,9 +40,12 @@ if(track){
   let animationFrame=0;
   let suppressClickTimer=0;
 
+  const restoreSnap=()=>{track.style.scrollSnapType="";};
   const stopMomentum=()=>{
     if(animationFrame) cancelAnimationFrame(animationFrame);
     animationFrame=0;
+    track.classList.remove("is-inertia");
+    restoreSnap();
   };
 
   const runMomentum=()=>{
@@ -58,6 +61,7 @@ if(track){
       }else{
         animationFrame=0;
         track.classList.remove("is-inertia");
+        restoreSnap();
       }
     };
     track.classList.add("is-inertia");
@@ -74,6 +78,7 @@ if(track){
     lastX=event.clientX;
     lastTime=performance.now();
     velocity=0;
+    track.style.scrollSnapType="none";
     track.classList.add("is-dragging");
     track.setPointerCapture(event.pointerId);
   });
@@ -105,6 +110,9 @@ if(track){
       clearTimeout(suppressClickTimer);
       suppressClickTimer=setTimeout(()=>delete track.dataset.dragged,180);
       if(Math.abs(velocity)>.025) runMomentum();
+      else restoreSnap();
+    }else{
+      restoreSnap();
     }
     if(event&&track.hasPointerCapture(event.pointerId)){
       track.releasePointerCapture(event.pointerId);
