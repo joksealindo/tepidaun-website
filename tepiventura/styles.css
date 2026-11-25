@@ -101,7 +101,7 @@ body{padding-top:45px}
  .activity-end{flex-basis:55px}
  .activity-end span{width:44px;height:44px;font-size:34px}
  .journal{padding:34px 0 0}
- .journal-heading{margin-bottom:10px}
+ .journal-heading{margin-bottom:5px}
  .journal-heading h2{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:clamp(30px,3.2vw,38px);letter-spacing:-.03em;margin:0;color:#111}
  .journal-heading p{font-size:12px;line-height:1.2;transform:translateY(-3px)}
  .journal-item{grid-template-columns:88px minmax(0,1fr) 28px;gap:10px;padding:10px 0}
