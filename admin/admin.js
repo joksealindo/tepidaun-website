@@ -136,7 +136,8 @@ async function deleteProduct(id){
 $("#product-form").addEventListener("submit",async e=>{
  e.preventDefault();const save=$("#save-product");save.disabled=true;save.textContent="Menyimpan…";$("#form-message").textContent="";
  try{
-  const name=$("#product-name").value.trim(),category_id=$("#product-category").value,id=$("#product-id").value||null;\n  if(!category_id){throw new Error("Pilih kategori produk terlebih dahulu.");}
+  const name=$("#product-name").value.trim(),category_id=$("#product-category").value,id=$("#product-id").value||null;
+  if(!category_id){throw new Error("Pilih kategori produk terlebih dahulu.");}
   let imagePath=state.imagePath;
   const file=$("#product-image").files[0];
   if(file){
