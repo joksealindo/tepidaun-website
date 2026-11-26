@@ -37,14 +37,33 @@ function openView(name){
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>openView(b.dataset.view)));
 document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>openView(b.dataset.open)));
 async function loadCatalog(){
- const [cats,prods]=await Promise.all([
-  client.from("product_categories").select("*").order("sort_order"),
-  client.from("products").select("*,product_categories(name)").order("sort_order").order("created_at",{ascending:false})
- ]);
- if(cats.error||prods.error){notify("Tidak dapat memuat katalog. Periksa koneksi.");return}
- state.categories=cats.data||[];state.products=prods.data||[];
- const filter=$("#category-filter");filter.innerHTML='<option value="">Semua kategori</option>'+state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
- $("#product-category").innerHTML=state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
+ const categorySelect=$("#product-category");
+ const filter=$("#category-filter");
+ categorySelect.innerHTML='<option value="">Memuat kategori…</option>';
+ filter.innerHTML='<option value="">Semua kategori</option>';
+ const cats=await client.from("product_categories")
+  .select("id,name,sort_order,is_active")
+  .eq("is_active",true)
+  .order("sort_order");
+ if(cats.error){
+  state.categories=[];
+  categorySelect.innerHTML='<option value="">Kategori gagal dimuat</option>';
+  notify("Kategori gagal dimuat: "+cats.error.message);
+  return;
+ }
+ state.categories=cats.data||[];
+ categorySelect.innerHTML='<option value="">Pilih kategori</option>'+state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
+ filter.innerHTML='<option value="">Semua kategori</option>'+state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
+ const prods=await client.from("products")
+  .select("*,product_categories(name)")
+  .order("sort_order")
+  .order("created_at",{ascending:false});
+ if(prods.error){
+  state.products=[];
+  notify("Kategori sudah dimuat, tetapi daftar produk gagal dimuat: "+prods.error.message);
+ }else{
+  state.products=prods.data||[];
+ }
  $("#stat-total").textContent=state.products.length;
  $("#stat-published").textContent=state.products.filter(p=>p.is_published).length;
  $("#stat-draft").textContent=state.products.filter(p=>!p.is_published).length;
@@ -90,7 +109,7 @@ async function deleteProduct(id){
 $("#product-form").addEventListener("submit",async e=>{
  e.preventDefault();const save=$("#save-product");save.disabled=true;save.textContent="Menyimpan…";$("#form-message").textContent="";
  try{
-  const name=$("#product-name").value.trim(),category_id=$("#product-category").value,id=$("#product-id").value||null;
+  const name=$("#product-name").value.trim(),category_id=$("#product-category").value,id=$("#product-id").value||null;\n  if(!category_id){throw new Error("Pilih kategori produk terlebih dahulu.");}
   let imagePath=state.imagePath;
   const file=$("#product-image").files[0];
   if(file){
@@ -102,7 +121,7 @@ $("#product-form").addEventListener("submit",async e=>{
   const result=id?await client.from("products").update(record).eq("id",id):await client.from("products").insert(record);
   if(result.error)throw result.error;
   $("#product-dialog").close();notify("Produk berhasil disimpan.");await loadCatalog();
- }catch(err){$("#form-message").textContent="Belum berhasil disimpan. Periksa data dan koneksi, lalu coba lagi."}
+ }catch(err){$("#form-message").textContent=err?.message||"Belum berhasil disimpan. Periksa data dan koneksi, lalu coba lagi."}
  finally{save.disabled=false;save.textContent="Simpan produk"}
 });
 boot();
