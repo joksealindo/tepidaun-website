@@ -13,17 +13,78 @@ $$('#menu-panel a').forEach(a => a.addEventListener('click', () => {
   menuToggle.setAttribute('aria-expanded', 'false');
 }));
 
-// Hero carousel
+// Hero carousel: autoplay every 5s; manual swipe/drag takes control and stops autoplay.
 const slides = $$('.hero-slide'), dots = $$('#hero-dots button');
+const heroTrack = $('#hero-track');
 let activeSlide = 0;
-function showSlide(index) {
+let autoplayTimer = null;
+let pointerId = null;
+let pointerStartX = 0;
+let dragDelta = 0;
+let dragging = false;
+let didDrag = false;
+
+function paintHero(index, animate = true) {
   activeSlide = (index + slides.length) % slides.length;
-  slides.forEach((slide, i) => slide.classList.toggle('active', i === activeSlide));
+  if (!animate) heroTrack.style.transition = 'none';
+  heroTrack.style.transform = `translate3d(${-activeSlide * 100}%,0,0)`;
   dots.forEach((dot, i) => dot.classList.toggle('active', i === activeSlide));
+  if (!animate) requestAnimationFrame(() => { heroTrack.style.transition = ''; });
+}
+function stopHeroAutoplay() {
+  if (autoplayTimer !== null) {
+    clearInterval(autoplayTimer);
+    autoplayTimer = null;
+  }
+}
+function showSlide(index) {
+  stopHeroAutoplay();
+  paintHero(index);
+}
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  autoplayTimer = setInterval(() => paintHero(activeSlide + 1), 5000);
 }
 $('#hero-prev').addEventListener('click', () => showSlide(activeSlide - 1));
 $('#hero-next').addEventListener('click', () => showSlide(activeSlide + 1));
 dots.forEach((dot, i) => dot.addEventListener('click', () => showSlide(i)));
+
+heroTrack.addEventListener('pointerdown', event => {
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+  stopHeroAutoplay();
+  pointerId = event.pointerId;
+  pointerStartX = event.clientX;
+  dragDelta = 0;
+  dragging = true;
+  didDrag = false;
+  heroTrack.classList.add('is-dragging');
+  heroTrack.setPointerCapture(pointerId);
+});
+heroTrack.addEventListener('pointermove', event => {
+  if (!dragging || event.pointerId !== pointerId) return;
+  dragDelta = event.clientX - pointerStartX;
+  if (Math.abs(dragDelta) > 4) didDrag = true;
+  if (!didDrag) return;
+  event.preventDefault();
+  heroTrack.style.transform = `translate3d(calc(${-activeSlide * 100}% + ${dragDelta}px),0,0)`;
+});
+function finishHeroDrag(event) {
+  if (!dragging || event.pointerId !== pointerId) return;
+  dragging = false;
+  heroTrack.classList.remove('is-dragging');
+  const threshold = Math.max(45, heroTrack.clientWidth * 0.12);
+  if (didDrag && Math.abs(dragDelta) > threshold) {
+    paintHero(activeSlide + (dragDelta < 0 ? 1 : -1));
+  } else {
+    paintHero(activeSlide);
+  }
+  pointerId = null;
+}
+heroTrack.addEventListener('pointerup', finishHeroDrag);
+heroTrack.addEventListener('pointercancel', finishHeroDrag);
+heroTrack.addEventListener('lostpointercapture', event => {
+  if (dragging) finishHeroDrag(event);
+});
+heroTrack.addEventListener('dragstart', event => event.preventDefault());
 
 // Product catalog: add real product records here when product photos and details are ready.
 const products = [];
