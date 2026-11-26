@@ -1,5 +1,5 @@
 const SUPABASE_URL="https://woiwusrwbrsrabswjxal.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY="sb_publishable_5d5lPQEGEYr4475By_3kFw_1z0VTuS";
+const SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvaXd1c3J3YnJzcmFic3dqeGFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2ODQwNjUsImV4cCI6MjExMTI2MDA2NX0.NIRo5YW2EeHYv5JvWRn8jhjsDIKrjcXKFSOqdqi04yE";
 const client=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 const $=s=>document.querySelector(s);
 const state={user:null,categories:[],products:[],imagePath:null};
