@@ -84,12 +84,17 @@ heroTrack.addEventListener('lostpointercapture', event => {
 });
 heroTrack.addEventListener('dragstart', event => event.preventDefault());
 
-// Product catalog: add real product records here when product photos and details are ready.
+// Product catalog: public products are loaded from Supabase.
+const SUPABASE_URL = 'https://woiwusrwbrsrabswjxal.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_5d5lPQEGEYr4475By_3kFw_1z0VTuS';
+const catalogClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const products = [];
 const cart = [];
 const productSelect = $('#order-product');
+const formatPrice = value => new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR', maximumFractionDigits:0}).format(Number(value || 0));
+
 function renderProducts(list = products) {
-  $$('.product-rail').forEach(rail => {
+  $('.product-rail').forEach(rail => {
     const category = rail.dataset.rail;
     const items = list.filter(p => p.category === category);
     rail.innerHTML = '';
@@ -100,10 +105,12 @@ function renderProducts(list = products) {
     items.forEach(product => {
       const card = document.createElement('article');
       card.className = 'product-card';
-      card.innerHTML = '<div class="product-photo"><img alt=""></div><div class="product-info"><h3></h3><p></p><div class="product-actions"><button class="buy-now">Beli Sekarang</button><button class="add-cart" aria-label="Tambah ke keranjang">+</button></div></div>';
-      card.querySelector('img').src = product.image;
-      card.querySelector('img').alt = product.name;
+      card.innerHTML = '<div class="product-photo"><img alt=""></div><div class="product-info"><h3></h3><strong class="product-price"></strong><p></p><div class="product-actions"><button class="buy-now">Beli Sekarang</button><button class="add-cart" aria-label="Tambah ke keranjang">+</button></div></div>';
+      const img = card.querySelector('img');
+      if (product.image) img.src = product.image;
+      img.alt = product.name;
       card.querySelector('h3').textContent = product.name;
+      card.querySelector('.product-price').textContent = formatPrice(product.price);
       card.querySelector('p').textContent = product.description || '';
       card.querySelector('.buy-now').addEventListener('click', () => selectProduct(product.id));
       card.querySelector('.add-cart').addEventListener('click', () => addToCart(product.id));
@@ -111,10 +118,35 @@ function renderProducts(list = products) {
     });
   });
   productSelect.innerHTML = '<option value="">Pilih produk</option>';
-  products.forEach(p => {
+  list.forEach(p => {
     const option = document.createElement('option');
     option.value = p.id; option.textContent = p.name; productSelect.append(option);
   });
+}
+
+async function loadProducts() {
+  const {data, error} = await catalogClient
+    .from('products')
+    .select('id,name,short_description,description,price,image_path,sort_order,product_categories!inner(name,is_active)')
+    .eq('is_published', true)
+    .eq('product_categories.is_active', true)
+    .order('sort_order', {ascending:true});
+  if (error) {
+    console.error('Tepinatura catalog:', error.message);
+    $('.product-rail').forEach(rail => {
+      rail.innerHTML = '<div class="empty-state"><span class="empty-symbol">!</span><p>Katalog belum dapat dimuat. Silakan coba lagi nanti.</p></div>';
+    });
+    return;
+  }
+  products.splice(0, products.length, ...(data || []).map(row => ({
+    id: row.id,
+    name: row.name,
+    category: row.product_categories.name,
+    description: row.short_description || row.description || '',
+    price: row.price,
+    image: row.image_path ? catalogClient.storage.from('product-images').getPublicUrl(row.image_path).data.publicUrl : ''
+  })));
+  renderProducts();
 }
 function selectProduct(id) {
   productSelect.value = id;
@@ -178,7 +210,7 @@ $('#search-form').addEventListener('submit', event => {
   const q = $('#search-input').value.trim().toLowerCase();
   const filtered = q ? products.filter(p => (p.name + ' ' + (p.description || '')).toLowerCase().includes(q)) : products;
   renderProducts(filtered);
-  $('#kategori').scrollIntoView({behavior:'smooth'});
+  document.querySelector('.category')?.scrollIntoView({behavior:'smooth'});
 });
 
 // Address dataset is intentionally not fabricated. Populate from a maintained Indonesian administrative-area dataset.
@@ -201,3 +233,4 @@ $('#order-form').addEventListener('submit', event => {
 });
 renderProducts();
 renderCart();
+loadProducts();
