@@ -7,7 +7,7 @@ const money=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",ma
 const slugify=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 function notify(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
 function showLogin(message=""){$("#login-screen").hidden=false;$("#app-screen").hidden=true;$("#login-message").textContent=message}
-function showApp(){ $("#login-screen").hidden=true;$("#app-screen").hidden=false;$("#signed-in-email").textContent=state.user.email||""; }
+function showApp(){ $("#login-screen").hidden=true;$("#app-screen").hidden=false;$("#signed-in-email").textContent="Mode sementara · tanpa login";$("#logout-button").hidden=true; }
 async function verifyAdmin(session){
  if(!session?.user) return false;
  const {data:{user},error}=await client.auth.getUser();
@@ -15,8 +15,8 @@ async function verifyAdmin(session){
  state.user=user;return true;
 }
 async function boot(){
- const {data:{session}}=await client.auth.getSession();
- if(session&&await verifyAdmin(session)){showApp();await loadCatalog()}else showLogin(session?"Akun ini belum memiliki akses administrator.":"");
+ showApp();
+ await loadCatalog();
 }
 $("#login-form").addEventListener("submit",async e=>{
  e.preventDefault();$("#login-message").textContent="Memeriksa akun…";
