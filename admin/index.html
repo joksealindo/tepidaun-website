@@ -9,6 +9,21 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+  <main id="recovery-screen" class="login-wrap" hidden>
+    <section class="login-card">
+      <a class="wordmark" href="../">tepi<span>daun</span></a>
+      <p class="eyebrow">PEMULIHAN AKUN</p>
+      <h1>Buat password baru.</h1>
+      <p class="muted">Masukkan password baru untuk akun administrator Tepidaun.</p>
+      <form id="recovery-form">
+        <label>Password baru<input id="new-password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <label>Ulangi password<input id="confirm-password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <button class="button primary" type="submit">Simpan password baru</button>
+        <p id="recovery-message" class="message" role="status"></p>
+      </form>
+    </section>
+  </main>
+
   <main id="login-screen" class="login-wrap">
     <section class="login-card">
       <a class="wordmark" href="../">tepi<span>daun</span></a>
