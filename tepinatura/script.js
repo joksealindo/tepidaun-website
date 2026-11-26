@@ -105,7 +105,7 @@ function renderProducts(list = products) {
     items.forEach(product => {
       const card = document.createElement('article');
       card.className = 'product-card';
-      card.innerHTML = '<div class="product-photo"><img alt=""></div><div class="product-info"><h3></h3><strong class="product-price"></strong><div class="product-actions"><button class="buy-now">Beli Sekarang</button><button class="add-cart" aria-label="Tambah ke keranjang">+</button></div></div>';
+      card.innerHTML = '<div class="product-photo"><img alt=""></div><div class="product-info"><h3></h3><strong class="product-price"></strong><div class="product-actions"><button class="buy-now">Beli</button><button class="add-cart" aria-label="Tambah ke keranjang"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 11.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6L22 7H5"></path></svg></button></div></div>';
       const img = card.querySelector('img');
       if (product.image) img.src = product.image;
       img.alt = product.name;
