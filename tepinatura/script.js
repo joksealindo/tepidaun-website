@@ -156,6 +156,15 @@ $('#cart-checkout').addEventListener('click', () => {
   openCart(false);
 });
 
+// Close the expanded mobile search when tapping anywhere outside it.
+document.addEventListener('pointerdown', event => {
+  const searchForm = $('#search-form');
+  if (searchForm.classList.contains('is-mobile-open') && !searchForm.contains(event.target)) {
+    searchForm.classList.remove('is-mobile-open');
+    $('#search-input').blur();
+  }
+});
+
 // Search filters product records when catalog has been populated.
 $('#search-form').addEventListener('submit', event => {
   if (window.matchMedia('(max-width: 720px)').matches && !$('#search-form').classList.contains('is-mobile-open')) {
