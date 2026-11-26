@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tepinatura — produk alami dan ramah lingkungan dari Tepidaun.">
+  <meta name="theme-color" content="#f7f7f3">
+  <title>Tepinatura — Produk dari Alam</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="shop-header">
+    <a class="brand" href="../" aria-label="Kembali ke Tepidaun"><img src="../assets/logo/logo-tepidaun.png" alt="Tepidaun"></a>
+    <a class="shop-name" href="./">TEPINATURA</a>
+    <div class="header-tools">
+      <form class="search" id="search-form" role="search">
+        <input id="search-input" type="search" placeholder="Cari produk..." aria-label="Cari produk">
+        <button type="submit" aria-label="Cari"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"></circle><path d="m16 16 4.2 4.2"></path></svg></button>
+      </form>
+      <button class="icon-button cart-button" id="cart-open" aria-label="Buka keranjang"> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 11.2a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L21 8H6"></path><circle cx="9.5" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg><span class="cart-count" id="cart-count">0</span></button>
+      <button class="menu-button" id="menu-toggle" aria-label="Buka menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+    <nav class="menu-panel" id="menu-panel">
+      <a href="../">Beranda Tepidaun</a><a href="#kategori">Kategori Produk</a><a href="#pemesanan">Cara Pemesanan</a><a href="#kontak">Kontak</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="Produk unggulan Tepinatura">
+      <div class="hero-track" id="hero-track">
+        <article class="hero-slide active">
+          <img src="../assets/pillars/tepidaunatura.png" alt="" class="hero-image">
+          <div class="hero-shade"></div>
+          <div class="hero-copy"><span class="eyebrow">TEPIDAUN NATURA</span><h1>Kebaikan alam,<br>lebih dekat.</h1><p>Temukan produk pilihan yang berangkat dari potensi alam sekitar.</p><a href="#kategori" class="light-link">Jelajahi produk <span>→</span></a></div>
+        </article>
+        <article class="hero-slide hero-slide-alt">
+          <div class="hero-copy"><span class="eyebrow">HASIL ALAM</span><h2>Kenali rasa dan potensi lokal.</h2><p>Produk alam pilihan dari lingkungan sekitar.</p><a href="#hasil-alam" class="light-link">Lihat kategori <span>→</span></a></div>
+        </article>
+        <article class="hero-slide hero-slide-green">
+          <div class="hero-copy"><span class="eyebrow">KEBUTUHAN TANAM</span><h2>Rawat bumi, mulai dari rumah.</h2><p>Dukung kegiatan menanam dan merawat lingkungan.</p><a href="#kebutuhan-tanam" class="light-link">Lihat kategori <span>→</span></a></div>
+        </article>
+      </div>
+      <div class="hero-controls"><div class="hero-dots" id="hero-dots"><button class="active" aria-label="Slide 1"></button><button aria-label="Slide 2"></button><button aria-label="Slide 3"></button></div><div class="hero-arrows"><button id="hero-prev" aria-label="Slide sebelumnya">←</button><button id="hero-next" aria-label="Slide berikutnya">→</button></div></div>
+    </section>
+
+    <section class="intro" id="kategori"><span class="eyebrow">PILIHAN TEPINATURA</span><h2>Temukan yang kamu butuhkan.</h2><p>Jelajahi produk berdasarkan kategori.</p></section>
+
+    <section class="category" id="hasil-alam" data-category="Hasil Alam">
+      <div class="category-heading"><h2>Hasil Alam</h2><a href="#hasil-alam">Jelajahi <span>→</span></a></div>
+      <div class="product-rail" data-rail="Hasil Alam"><div class="empty-state"><span class="empty-symbol">✳</span><p>Produk hasil alam akan hadir di sini.</p></div></div>
+    </section>
+    <section class="category" id="kebutuhan-tanam" data-category="Kebutuhan Tanam">
+      <div class="category-heading"><h2>Kebutuhan Tanam</h2><a href="#kebutuhan-tanam">Jelajahi <span>→</span></a></div>
+      <div class="product-rail" data-rail="Kebutuhan Tanam"><div class="empty-state"><span class="empty-symbol">⌁</span><p>Perlengkapan dan kebutuhan tanam akan hadir di sini.</p></div></div>
+    </section>
+    <section class="category" id="tanaman" data-category="Tanaman">
+      <div class="category-heading"><h2>Tanaman</h2><a href="#tanaman">Jelajahi <span>→</span></a></div>
+      <div class="product-rail" data-rail="Tanaman"><div class="empty-state"><span class="empty-symbol">♧</span><p>Pilihan tanaman akan hadir di sini.</p></div></div>
+    </section>
+    <section class="category" id="produk-pilihan" data-category="Produk Pilihan">
+      <div class="category-heading"><h2>Produk Pilihan</h2><a href="#produk-pilihan">Jelajahi <span>→</span></a></div>
+      <div class="product-rail" data-rail="Produk Pilihan"><div class="empty-state"><span class="empty-symbol">✧</span><p>Produk pilihan Tepinatura akan hadir di sini.</p></div></div>
+    </section>
+
+    <section class="order-section" id="pemesanan">
+      <div class="order-intro"><span class="eyebrow">PESANAN</span><h2>Mulai pesananmu.</h2><p>Pilih produk, isi detail penerima, lalu kami akan menghubungimu untuk konfirmasi pesanan dan pengiriman.</p></div>
+      <form id="order-form" class="order-form">
+        <div class="form-grid">
+          <label>Nama penerima<input name="name" required placeholder="Nama lengkap"></label>
+          <label>Nomor WhatsApp<input name="phone" required inputmode="tel" placeholder="08xxxxxxxxxx"></label>
+          <label class="wide">Produk yang dipesan<select name="product" id="order-product" required><option value="">Pilih produk</option></select></label>
+          <label>Jumlah<input name="quantity" type="number" min="1" value="1" required></label>
+          <label>Layanan pengiriman<select name="shipping" required><option value="">Pilih layanan</option><option>SPX Hemat</option><option>SPX Kargo</option><option>SPX Reguler</option><option>SPX Same Day</option><option>SPX Instant</option></select></label>
+          <label>Provinsi<select name="province" id="province" required><option value="">Pilih provinsi</option></select></label>
+          <label>Kabupaten / Kota<select name="city" id="city" required disabled><option value="">Pilih kabupaten/kota</option></select></label>
+          <label>Kecamatan<select name="district" id="district" required disabled><option value="">Pilih kecamatan</option></select></label>
+          <label>Desa / Kelurahan<select name="village" id="village" required disabled><option value="">Pilih desa/kelurahan</option></select></label>
+          <label class="wide">Alamat lengkap<input name="address" required placeholder="Nama jalan, nomor rumah, RT/RW, patokan"></label>
+          <label>Kode pos<input name="postal" inputmode="numeric" placeholder="Kode pos"></label>
+          <label>Catatan pesanan<input name="notes" placeholder="Opsional"></label>
+        </div>
+        <p class="form-note">Pilihan wilayah akan diaktifkan setelah data administrasi wilayah Indonesia dimasukkan. Ketersediaan layanan SPX dan ongkos kirim akan dikonfirmasi sebelum pembayaran.</p>
+        <button type="submit" class="primary-button">Kirim detail pesanan <span>→</span></button>
+        <p class="form-feedback" id="form-feedback" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="shop-footer" id="kontak"><a href="../">TEPIDAUN</a><span>TEPINATURA · Pilihan produk alami dari alam sekitar</span><small>© <span id="year"></span> Tepidaun</small></footer>
+
+  <div class="cart-backdrop" id="cart-backdrop"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Keranjang belanja" aria-hidden="true">
+    <div class="drawer-heading"><h2>Keranjang</h2><button id="cart-close" aria-label="Tutup keranjang">×</button></div>
+    <div id="cart-items" class="cart-items"><p class="cart-empty">Keranjangmu masih kosong.</p></div>
+    <button id="cart-checkout" class="primary-button" disabled>Lanjut ke pemesanan <span>→</span></button>
+  </aside>
+  <script src="script.js"></script>
+</body>
+</html>
