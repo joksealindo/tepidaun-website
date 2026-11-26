@@ -15,9 +15,36 @@ async function verifyAdmin(session){
  state.user=user;return true;
 }
 async function boot(){
+ await client.auth.getSession();
+ if(window.location.hash.includes("type=recovery")){
+  $("#recovery-screen").hidden=false;
+  $("#login-screen").hidden=true;
+  $("#app-screen").hidden=true;
+  return;
+ }
  showApp();
  await loadCatalog();
 }
+$("#recovery-form").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const password=$("#new-password").value;
+ if(password.length<8){$("#recovery-message").textContent="Password minimal 8 karakter.";return}
+ if(password!==$("#confirm-password").value){$("#recovery-message").textContent="Konfirmasi password belum sama.";return}
+ const button=e.submitter;
+ if(button){button.disabled=true;button.textContent="Menyimpan…"}
+ $("#recovery-message").textContent="Menyimpan password baru…";
+ const {error}=await client.auth.updateUser({password});
+ if(error){
+  $("#recovery-message").textContent="Belum berhasil: "+error.message;
+  if(button){button.disabled=false;button.textContent="Simpan password baru"}
+  return;
+ }
+ history.replaceState(null,document.title,window.location.pathname+window.location.search);
+ $("#recovery-screen").hidden=true;
+ showApp();
+ await loadCatalog();
+ notify("Password baru berhasil disimpan.");
+});
 $("#login-form").addEventListener("submit",async e=>{
  e.preventDefault();$("#login-message").textContent="Memeriksa akun…";
  const {data,error}=await client.auth.signInWithPassword({email:$("#email").value.trim(),password:$("#password").value});
