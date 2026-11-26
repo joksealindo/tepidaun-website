@@ -44,8 +44,6 @@ function showSlide(index) {
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   autoplayTimer = setInterval(() => paintHero(activeSlide + 1), 5000);
 }
-$('#hero-prev').addEventListener('click', () => showSlide(activeSlide - 1));
-$('#hero-next').addEventListener('click', () => showSlide(activeSlide + 1));
 dots.forEach((dot, i) => dot.addEventListener('click', () => showSlide(i)));
 
 heroTrack.addEventListener('pointerdown', event => {
