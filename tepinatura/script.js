@@ -105,13 +105,12 @@ function renderProducts(list = products) {
     items.forEach(product => {
       const card = document.createElement('article');
       card.className = 'product-card';
-      card.innerHTML = '<div class="product-photo"><img alt=""></div><div class="product-info"><h3></h3><strong class="product-price"></strong><p></p><div class="product-actions"><button class="buy-now">Beli Sekarang</button><button class="add-cart" aria-label="Tambah ke keranjang">+</button></div></div>';
+      card.innerHTML = '<div class="product-photo"><img alt=""></div><div class="product-info"><h3></h3><strong class="product-price"></strong><div class="product-actions"><button class="buy-now">Beli Sekarang</button><button class="add-cart" aria-label="Tambah ke keranjang">+</button></div></div>';
       const img = card.querySelector('img');
       if (product.image) img.src = product.image;
       img.alt = product.name;
       card.querySelector('h3').textContent = product.name;
       card.querySelector('.product-price').textContent = formatPrice(product.price);
-      card.querySelector('p').textContent = product.description || '';
       card.querySelector('.buy-now').addEventListener('click', () => selectProduct(product.id));
       card.querySelector('.add-cart').addEventListener('click', () => addToCart(product.id));
       rail.append(card);
