@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f7f6">
+  <title>Dashboard Admin — Tepidaun</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main id="login-screen" class="login-wrap">
+    <section class="login-card">
+      <a class="wordmark" href="../">tepi<span>daun</span></a>
+      <p class="eyebrow">RUANG PENGELOLAAN</p>
+      <h1>Selamat datang.</h1>
+      <p class="muted">Masuk untuk mengelola website Tepidaun.</p>
+      <form id="login-form">
+        <label>Email<input id="email" type="email" autocomplete="username" required value=""></label>
+        <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+        <button class="button primary" type="submit">Masuk ke dashboard</button>
+        <p id="login-message" class="message" role="status"></p>
+      </form>
+      <a class="back-link" href="../">← Kembali ke website</a>
+    </section>
+  </main>
+
+  <div id="app-screen" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="wordmark" href="../">tepi<span>daun</span></a>
+      <p class="eyebrow">ADMINISTRATOR</p>
+      <nav class="side-nav" aria-label="Navigasi dashboard">
+        <button class="nav-item active" data-view="overview"><span>⌂</span> Ringkasan</button>
+        <button class="nav-item" data-view="tepinatura"><span>✳</span> Tepinatura</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <span id="signed-in-email" class="signed-email"></span>
+        <button id="logout-button" class="button subtle">Keluar</button>
+      </div>
+    </aside>
+
+    <section class="main-panel">
+      <header class="topbar">
+        <div><p class="eyebrow">TEPIDAUN / ADMIN</p><h1 id="page-title">Ringkasan</h1></div>
+        <a class="site-link" href="../" target="_blank" rel="noopener">Lihat website ↗</a>
+      </header>
+
+      <section id="view-overview" class="view">
+        <div class="welcome-block">
+          <p class="eyebrow">SELAMAT DATANG</p>
+          <h2>Satu tempat untuk mengelola<br>empat pilar Tepidaun.</h2>
+          <p class="muted">Pilih pilar untuk mengelola kontennya. Kita mulai dari Tepinatura.</p>
+        </div>
+        <div class="pillar-admin-grid">
+          <button class="pillar-admin-card featured" data-open="tepinatura">
+            <span class="pillar-number">01 / TOKO</span><span class="pillar-title">Tepinatura</span>
+            <span class="pillar-description">Kelola produk, kategori, harga, stok, dan foto.</span><span class="card-action">Kelola produk <b>→</b></span>
+          </button>
+          <article class="pillar-admin-card coming"><span class="pillar-number">02 / PETUALANGAN</span><span class="pillar-title">Tepiventura</span><span class="pillar-description">Aktivitas, acara, dan jurnal petualangan.</span><span class="coming-label">Disiapkan berikutnya</span></article>
+          <article class="pillar-admin-card coming"><span class="pillar-number">03 / NAVIGASI</span><span class="pillar-title">Navikita</span><span class="pillar-description">Informasi aplikasi dan katalog peta.</span><span class="coming-label">Disiapkan berikutnya</span></article>
+          <article class="pillar-admin-card coming"><span class="pillar-number">04 / PENDIDIKAN</span><span class="pillar-title">Education Center</span><span class="pillar-description">Program dan kegiatan pendidikan.</span><span class="coming-label">Disiapkan berikutnya</span></article>
+        </div>
+      </section>
+
+      <section id="view-tepinatura" class="view" hidden>
+        <div class="section-intro">
+          <div><p class="eyebrow">PILAR 01 / TOKO</p><h2>Kelola produk Tepinatura.</h2><p class="muted">Produk yang dipublikasikan dapat ditampilkan di website.</p></div>
+          <button id="add-product" class="button primary">＋ Tambah produk</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><span>Total produk</span><strong id="stat-total">0</strong></div>
+          <div class="stat-card"><span>Ditampilkan</span><strong id="stat-published">0</strong></div>
+          <div class="stat-card"><span>Draft</span><strong id="stat-draft">0</strong></div>
+        </div>
+        <div class="toolbar">
+          <input id="product-search" type="search" placeholder="Cari nama produk…">
+          <select id="category-filter"><option value="">Semua kategori</option></select>
+          <select id="status-filter"><option value="">Semua status</option><option value="published">Ditampilkan</option><option value="draft">Draft</option></select>
+        </div>
+        <div id="product-list" class="product-list"><div class="loading">Memuat produk…</div></div>
+      </section>
+    </section>
+  </div>
+
+  <dialog id="product-dialog" class="product-dialog">
+    <form id="product-form" method="dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">KATALOG TEPINATURA</p><h2 id="dialog-title">Tambah produk</h2></div><button type="button" id="close-dialog" class="close-button" aria-label="Tutup">×</button></div>
+      <input id="product-id" type="hidden">
+      <div class="form-grid">
+        <label class="full">Nama produk<input id="product-name" required maxlength="140" placeholder="Contoh: Kopi Arabika Temanggung"></label>
+        <label>Kategori<select id="product-category" required></select></label>
+        <label>SKU <span class="optional">Opsional</span><input id="product-sku" maxlength="60" placeholder="TPN-001"></label>
+        <label>Harga jual (Rp)<input id="product-price" type="number" min="0" step="1" required value="0"></label>
+        <label>Harga sebelum diskon (Rp)<span class="optional">Opsional</span><input id="product-compare" type="number" min="0" step="1"></label>
+        <label>Stok<input id="product-stock" type="number" min="0" step="1" value="0" required></label>
+        <label>Urutan tampil<input id="product-order" type="number" step="1" value="0"></label>
+        <label class="full">Deskripsi singkat<textarea id="product-short" rows="2" maxlength="240" placeholder="Ringkasan produk untuk kartu katalog"></textarea></label>
+        <label class="full">Deskripsi produk<textarea id="product-description" rows="4" placeholder="Informasi lengkap produk"></textarea></label>
+        <label class="full">Foto produk <span class="optional">JPG, PNG, WebP · Maksimal 5 MB</span><input id="product-image" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        <div id="image-preview" class="image-preview full" hidden></div>
+        <label class="publish-toggle full"><input id="product-published" type="checkbox"> Tampilkan produk di website</label>
+      </div>
+      <p id="form-message" class="message" role="status"></p>
+      <div class="dialog-actions"><button type="button" id="cancel-dialog" class="button subtle">Batal</button><button id="save-product" type="submit" class="button primary">Simpan produk</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="admin.js"></script>
+</body>
+</html>
