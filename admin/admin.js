@@ -72,13 +72,20 @@ async function loadCatalog(){
   .select("id,name,sort_order,is_active")
   .eq("is_active",true)
   .order("sort_order");
- if(cats.error){
-  state.categories=[];
-  categorySelect.innerHTML='<option value="">Kategori gagal dimuat</option>';
-  notify("Kategori gagal dimuat: "+cats.error.message);
-  return;
+ const fallbackCategories=[
+  {id:"aae1b87a-916d-498a-b454-42578424cefc",name:"Hasil Alam",sort_order:1},
+  {id:"72cbb5d2-7a15-41f8-80a0-35b8384bb2f7",name:"Kebutuhan Tanam",sort_order:2},
+  {id:"b4093078-00e7-45e9-85b4-f0fefc1afab8",name:"Tanaman",sort_order:3},
+  {id:"ccee38b8-8e99-4f04-a8b9-00bc7e731822",name:"Produk Pilihan",sort_order:4}
+ ];
+ if(cats.error || !cats.data?.length){
+  state.categories=fallbackCategories;
+  categorySelect.innerHTML='<option value="">Pilih kategori</option>'+state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
+  filter.innerHTML='<option value="">Semua kategori</option>'+state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
+  notify("Daftar kategori memakai data cadangan. "+(cats.error?.message||""));
+ }else{
+  state.categories=cats.data;
  }
- state.categories=cats.data||[];
  categorySelect.innerHTML='<option value="">Pilih kategori</option>'+state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
  filter.innerHTML='<option value="">Semua kategori</option>'+state.categories.map(c=>'<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>').join("");
  const prods=await client.from("products")
