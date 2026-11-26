@@ -94,7 +94,7 @@ const productSelect = $('#order-product');
 const formatPrice = value => new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR', maximumFractionDigits:0}).format(Number(value || 0));
 
 function renderProducts(list = products) {
-  $('.product-rail').forEach(rail => {
+  $$('.product-rail').forEach(rail => {
     const category = rail.dataset.rail;
     const items = list.filter(p => p.category === category);
     rail.innerHTML = '';
@@ -133,7 +133,7 @@ async function loadProducts() {
     .order('sort_order', {ascending:true});
   if (error) {
     console.error('Tepinatura catalog:', error.message);
-    $('.product-rail').forEach(rail => {
+    $$('.product-rail').forEach(rail => {
       rail.innerHTML = '<div class="empty-state"><span class="empty-symbol">!</span><p>Katalog belum dapat dimuat. Silakan coba lagi nanti.</p></div>';
     });
     return;
