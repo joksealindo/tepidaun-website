@@ -356,6 +356,7 @@ const locationCache = new Map();
 let currentShippingRate = null;
 let availableShippingRates = [];
 let shippingQuoteLoading = false;
+let quoteInFlight = false;
 const shippingCheckButton = $('#check-shipping-rate');
 let quoteRequestId = 0;
 
@@ -382,8 +383,8 @@ function resetShippingQuote(message = 'Pilih produk, wilayah tujuan, dan titik p
   currentShippingRate = null;
   availableShippingRates = [];
   shippingQuoteLoading = false;
-  shippingCheckButton.disabled = false;
-  shippingCheckButton.textContent = 'Cek Ongkos Kirim';
+  shippingCheckButton.disabled = quoteInFlight;
+  shippingCheckButton.textContent = quoteInFlight ? 'Menyelesaikan permintaan…' : 'Cek Ongkos Kirim';
   shippingSelect.innerHTML = '<option value="">Menunggu pilihan layanan</option>';
   shippingSelect.disabled = true;
   $('#form-feedback').textContent = message;
@@ -419,7 +420,7 @@ async function getDestinationSubdistrict() {
   return result.destination;
 }
 async function fetchShippingQuote() {
-  if (shippingQuoteLoading) return;
+  if (quoteInFlight) return;
   const {product, quantity} = selectedProductAndQuantity();
   const requestId = ++quoteRequestId;
   if (!product) {
@@ -433,6 +434,7 @@ async function fetchShippingQuote() {
 
   currentShippingRate = null;
   availableShippingRates = [];
+  quoteInFlight = true;
   shippingQuoteLoading = true;
   shippingCheckButton.disabled = true;
   shippingCheckButton.textContent = 'Menghitung Ongkir…';
@@ -522,6 +524,9 @@ async function fetchShippingQuote() {
   }
 
   const resultSets = await Promise.all(tasks);
+  quoteInFlight = false;
+  shippingCheckButton.disabled = false;
+  shippingCheckButton.textContent = 'Cek Ongkos Kirim';
   if (requestId !== quoteRequestId) return;
   availableShippingRates = resultSets.flat().filter(item => Number.isFinite(Number(item.cost)));
 
