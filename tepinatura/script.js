@@ -355,9 +355,9 @@ async function getDestinationSubdistrict() {
   if (!response.ok || !result.success) throw new Error(result.error || 'Pencarian kecamatan ke layanan ongkir gagal.');
 
   const normalize = value => String(value || '').trim().toLocaleLowerCase('id-ID')
-    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
-    .replace(/^(kabupaten|kab\\.?|kota administrasi|kota)\\s+/i, '')
-    .replace(/\\s+/g, ' ');
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/^(kabupaten|kab\.?|kota administrasi|kota)\s+/i, '')
+    .replace(/\s+/g, ' ');
   const locations = result.locations || [];
   const byDistrict = locations.filter(location =>
     normalize(location.subdistrict_name) === normalize(districtName)
