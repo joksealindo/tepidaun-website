@@ -337,7 +337,7 @@ async function fetchShippingQuote() {
     resetShippingQuote();
     return;
   }
-  if (!/^\\d{5}$/.test(postal)) {
+  if (!/^[0-9]{5}$/.test(postal)) {
     resetShippingQuote('Masukkan kode pos tujuan sebanyak 5 digit.');
     return;
   }
