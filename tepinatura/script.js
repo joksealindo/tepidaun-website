@@ -419,8 +419,8 @@ async function fetchShippingQuote() {
   availableShippingRates = [];
   shippingQuoteLoading = true;
   shippingSelect.disabled = true;
-  shippingSelect.innerHTML = '<option value="">Menghitung pilihan layanan SPX…</option>';
-  $('#form-feedback').textContent = 'Mencari data wilayah dan menghitung pilihan layanan SPX…';
+  shippingSelect.innerHTML = '<option value="">Menghitung pilihan layanan…</option>';
+  $('#form-feedback').textContent = 'Mencari wilayah dan menghitung tarif pengiriman…';
   updateOrderSummary();
 
   try {
@@ -455,7 +455,7 @@ async function fetchShippingQuote() {
     );
     let biteshipRates = [];
     if (destinationPoint) {
-      const dimensionsKnown = /5\\s?l/i.test(product.name || '');
+      const dimensionsKnown = /5\s?l/i.test(product.name || '');
       if (dimensionsKnown) {
         const biteResponse = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
           method: 'POST',
@@ -496,17 +496,15 @@ async function fetchShippingQuote() {
       const option = document.createElement('option');
       option.value = rate.service_code || ('spx_service_' + index);
       const amount = Number(rate.discounted_cost ?? rate.cost);
-      const serviceLabel = rate.service_name || 'SPX';
+      const serviceLabel = rate.service_name || rate.courier_name || 'Kurir';
       const etd = rate.etd_text ? ' · ' + rate.etd_text : '';
-      option.textContent = serviceLabel + etd + ' — ' + formatPrice(amount);
+      option.textContent = (rate.category || 'Reguler') + ' · ' + serviceLabel + etd + ' — ' + formatPrice(amount);
       shippingSelect.append(option);
     });
     shippingSelect.disabled = false;
     shippingSelect.selectedIndex = 0;
     currentShippingRate = availableShippingRates[0];
-    $('#form-feedback').textContent = availableShippingRates.length > 1
-      ? availableShippingRates.length + ' pilihan layanan SPX berhasil dihitung.'
-      : 'Tarif SPX berhasil dihitung.';
+    $('#form-feedback').textContent = availableShippingRates.length + ' pilihan layanan pengiriman berhasil dihitung.';
     updateOrderSummary();
   } catch (error) {
     if (requestId !== quoteRequestId) return;
