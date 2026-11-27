@@ -295,22 +295,120 @@ citySelect.addEventListener('change', async () => {
 loadProvinces();
 
 
-// Order price summary. Shipping stays unquoted until an authorized SPX tariff source is connected.
+// Live SPX Regular shipping quote through the protected Supabase Edge Function.
 const quantityInput = $('#order-form [name="quantity"]');
 const shippingSelect = $('#order-form [name="shipping"]');
-function updateOrderSummary() {
-  const selected = products.find(p => p.id === productSelect.value);
+const postalInput = $('#order-form [name="postal"]');
+let currentShippingRate = null;
+let quoteTimer = null;
+let quoteRequestId = 0;
+
+function selectedProductAndQuantity() {
+  const product = products.find(p => p.id === productSelect.value);
   const quantity = Math.max(1, Number(quantityInput.value) || 1);
-  const productTotal = selected ? Number(selected.price) * quantity : null;
-  $('#summary-product-price').textContent = productTotal === null ? '—' : formatPrice(productTotal);
-  $('#summary-shipping').textContent = shippingSelect.value ? 'Belum tersedia' : 'Pilih layanan';
-  $('#summary-total').textContent = productTotal === null ? '—' : 'Menunggu ongkir';
+  return { product, quantity };
 }
-productSelect.addEventListener('change', updateOrderSummary);
-quantityInput.addEventListener('input', updateOrderSummary);
+function updateOrderSummary() {
+  const {product, quantity} = selectedProductAndQuantity();
+  const productTotal = product ? Number(product.price) * quantity : null;
+  const shippingCost = currentShippingRate
+    ? Number(currentShippingRate.discounted_cost ?? currentShippingRate.cost)
+    : null;
+  $('#summary-product-price').textContent = productTotal === null ? '—' : formatPrice(productTotal);
+  $('#summary-shipping').textContent = shippingCost === null
+    ? (shippingSelect.disabled ? 'Mengambil tarif…' : 'Menunggu tarif SPX')
+    : formatPrice(shippingCost);
+  $('#summary-total').textContent = productTotal === null || shippingCost === null
+    ? (productTotal === null ? '—' : 'Menunggu ongkir')
+    : formatPrice(productTotal + shippingCost);
+}
+function resetShippingQuote(message = 'Lengkapi produk, jumlah, dan kode pos tujuan.') {
+  currentShippingRate = null;
+  shippingSelect.innerHTML = '<option value="">SPX Reguler — menunggu tarif</option>';
+  shippingSelect.disabled = true;
+  $('#form-feedback').textContent = message;
+  updateOrderSummary();
+}
+async function fetchShippingQuote() {
+  const {product, quantity} = selectedProductAndQuantity();
+  const postal = postalInput.value.trim();
+  const requestId = ++quoteRequestId;
+  if (!product || !postal) {
+    resetShippingQuote();
+    return;
+  }
+  if (!/^\\d{5}$/.test(postal)) {
+    resetShippingQuote('Masukkan kode pos tujuan sebanyak 5 digit.');
+    return;
+  }
+  if (!Number.isFinite(Number(product.weightGrams)) || Number(product.weightGrams) < 1) {
+    resetShippingQuote('Berat produk belum diatur. Silakan hubungi admin.');
+    return;
+  }
+
+  currentShippingRate = null;
+  shippingSelect.disabled = true;
+  shippingSelect.innerHTML = '<option value="">Menghitung ongkir SPX Reguler…</option>';
+  $('#form-feedback').textContent = 'Sedang menghitung ongkir SPX Reguler…';
+  updateOrderSummary();
+
+  try {
+    const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_PUBLISHABLE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
+      },
+      body: JSON.stringify({
+        destination_postal_code: postal,
+        weight: Math.ceil(Number(product.weightGrams) * quantity)
+      })
+    });
+    const result = await response.json();
+    if (requestId !== quoteRequestId) return;
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Tarif SPX belum dapat dihitung.');
+    }
+    const rate = (result.rates || []).find(item => item.courier_code === 'spx');
+    if (!rate) {
+      resetShippingQuote('SPX Reguler belum tersedia untuk rute tujuan ini.');
+      return;
+    }
+    currentShippingRate = rate;
+    const amount = Number(rate.discounted_cost ?? rate.cost);
+    const serviceLabel = rate.service_name || 'SPX Reguler';
+    const etd = rate.etd_text ? ' · ' + rate.etd_text : '';
+    shippingSelect.innerHTML = '';
+    const option = document.createElement('option');
+    option.value = rate.service_code || 'spx_regular';
+    option.textContent = serviceLabel + etd + ' — ' + formatPrice(amount);
+    shippingSelect.append(option);
+    shippingSelect.disabled = false;
+    shippingSelect.value = option.value;
+    $('#form-feedback').textContent = rate.source === 'cache'
+      ? 'Tarif SPX berhasil dimuat (data cache).'
+      : 'Tarif SPX berhasil dihitung.';
+    updateOrderSummary();
+  } catch (error) {
+    if (requestId !== quoteRequestId) return;
+    resetShippingQuote(error.message || 'Gagal mengambil tarif SPX. Coba lagi.');
+  }
+}
+function scheduleShippingQuote() {
+  clearTimeout(quoteTimer);
+  quoteTimer = setTimeout(fetchShippingQuote, 450);
+}
+productSelect.addEventListener('change', scheduleShippingQuote);
+quantityInput.addEventListener('input', () => {
+  updateOrderSummary();
+  scheduleShippingQuote();
+});
+postalInput.addEventListener('change', scheduleShippingQuote);
+postalInput.addEventListener('blur', scheduleShippingQuote);
 shippingSelect.addEventListener('change', updateOrderSummary);
 
-// Order submission prepares a WhatsApp-ready summary; replace the number with Tepidaun's official contact before launch.
+// Validate the live quote before accepting the order details.
 $('#order-form').addEventListener('submit', event => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
@@ -318,7 +416,17 @@ $('#order-form').addEventListener('submit', event => {
     $('#form-feedback').textContent = 'Silakan pilih produk terlebih dahulu.';
     return;
   }
-  $('#form-feedback').textContent = 'Estimasi ongkir SPX belum tersedia karena akses tarif SPX di luar Shopee belum terhubung.';
+  if (!currentShippingRate) {
+    $('#form-feedback').textContent = 'Tarif SPX belum tersedia. Pastikan kode pos tujuan benar dan tunggu perhitungan selesai.';
+    return;
+  }
+  const {product, quantity} = selectedProductAndQuantity();
+  const productTotal = Number(product.price) * quantity;
+  const shippingCost = Number(currentShippingRate.discounted_cost ?? currentShippingRate.cost);
+  $('#form-feedback').textContent = 'Rincian sementara: ' + product.name + ' × ' + quantity +
+    ' · Produk ' + formatPrice(productTotal) + ' · Ongkir SPX ' + formatPrice(shippingCost) +
+    ' · Total ' + formatPrice(productTotal + shippingCost) +
+    '. Tahap pengiriman pesanan melalui WhatsApp akan disambungkan berikutnya.';
 });
 renderProducts();
 renderCart();
