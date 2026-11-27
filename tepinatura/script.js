@@ -355,16 +355,25 @@ async function getDestinationSubdistrict() {
   if (!response.ok || !result.success) throw new Error(result.error || 'Pencarian kecamatan ke layanan ongkir gagal.');
 
   const normalize = value => String(value || '').trim().toLocaleLowerCase('id-ID')
-    .replace(/^(kabupaten|kota administrasi|kota)\\s+/i, '');
-  const matches = (result.locations || []).filter(location =>
-    normalize(location.subdistrict_name) === normalize(districtName) &&
+    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+    .replace(/^(kabupaten|kab\\.?|kota administrasi|kota)\\s+/i, '')
+    .replace(/\\s+/g, ' ');
+  const locations = result.locations || [];
+  const byDistrict = locations.filter(location =>
+    normalize(location.subdistrict_name) === normalize(districtName)
+  );
+  const matches = byDistrict.filter(location =>
     normalize(location.city_name) === normalize(cityName) &&
     normalize(location.province_name) === normalize(provinceName)
   );
   if (matches.length !== 1) {
+    const candidates = byDistrict.slice(0, 5).map(location =>
+      location.label || [location.subdistrict_name, location.city_name, location.province_name].filter(Boolean).join(', ')
+    );
+    const detail = candidates.length ? ' Hasil yang ditemukan: ' + candidates.join(' | ') : ' Kata kunci: ' + districtName;
     throw new Error(matches.length
-      ? 'Kecamatan tujuan ditemukan lebih dari satu. Mohon periksa pilihan kabupaten/kota.'
-      : 'Kecamatan tidak ditemukan pada database layanan ongkir. Pastikan pilihan wilayah benar.');
+      ? 'Kecamatan tujuan ditemukan lebih dari satu. Mohon periksa pilihan kabupaten/kota.' + detail
+      : 'Nama kecamatan belum cocok dengan data layanan ongkir.' + detail);
   }
   const selected = matches[0];
   if (!selected.subdistrict_id) throw new Error('ID kecamatan tujuan tidak tersedia dari layanan ongkir.');
