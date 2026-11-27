@@ -75,13 +75,13 @@
           <label>Nomor WhatsApp<input name="phone" required inputmode="tel" placeholder="08xxxxxxxxxx"></label>
           <label class="wide">Produk yang dipesan<select name="product" id="order-product" required><option value="">Pilih produk</option></select></label>
           <label>Jumlah<input name="quantity" type="number" min="1" value="1" required></label>
-          <label>Layanan pengiriman<select name="shipping" required><option value="">Pilih layanan</option><option>SPX Hemat</option><option>SPX Kargo</option><option>SPX Reguler</option><option>SPX Same Day</option><option>SPX Instant</option></select></label>
+          <label>Layanan pengiriman<select name="shipping" required disabled><option value="">SPX Reguler — menunggu tarif</option></select></label>
           <label>Provinsi<select name="province" id="province" required><option value="">Pilih provinsi</option></select></label>
           <label>Kabupaten / Kota<select name="city" id="city" required disabled><option value="">Pilih kabupaten/kota</option></select></label>
           <label>Kecamatan<select name="district" id="district" required disabled><option value="">Pilih kecamatan</option></select></label>
           <label>Desa / Kelurahan<input name="village" id="village" required placeholder="Ketik nama desa/kelurahan"></label>
           <label class="wide">Alamat lengkap<input name="address" required placeholder="Nama jalan, nomor rumah, RT/RW, patokan"></label>
-          <label>Kode pos<input name="postal" inputmode="numeric" placeholder="Kode pos"></label>
+          <label>Kode pos<input name="postal" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required placeholder="5 digit kode pos"></label>
           <label>Catatan pesanan<input name="notes" placeholder="Opsional"></label>
         </div>
         <div class="order-summary" aria-live="polite">
@@ -89,7 +89,7 @@
           <div><span>Ongkir</span><strong id="summary-shipping">Menunggu tarif SPX</strong></div>
           <div class="summary-total"><span>Total</span><strong id="summary-total">Menunggu ongkir</strong></div>
         </div>
-        <p class="form-note">Pilih provinsi, kabupaten/kota, dan kecamatan. Desa/kelurahan sementara diisi manual. Ketersediaan layanan SPX dan ongkos kirim akan dikonfirmasi sebelum pembayaran.</p>
+        <p class="form-note">Isi kode pos tujuan untuk menghitung ongkir SPX Reguler secara otomatis. Berat paket dihitung dari berat produk dan jumlah yang dipesan.</p>
         <button type="submit" class="primary-button">Kirim detail pesanan <span>›</span></button>
         <p class="form-feedback" id="form-feedback" role="status"></p>
       </form>
@@ -105,6 +105,6 @@
     <button id="cart-checkout" class="primary-button" disabled>Lanjut ke pemesanan <span>›</span></button>
   </aside>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js?v=20261127-2"></script>
+  <script src="script.js?v=20261127-3"></script>
 </body>
 </html>
