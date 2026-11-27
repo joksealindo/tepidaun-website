@@ -48,3 +48,6 @@
 @media(max-width:720px){.form-grid{grid-template-columns:1fr 1fr}.field-product{grid-column:1}.field-quantity{grid-column:2}.field-province,.field-city,.field-district,.form-grid label.wide,.form-grid>.wide{grid-column:1/-1}.shipping-check-row{grid-template-columns:1fr}.shipping-check-row .primary-button{width:100%}}
 
 @media(max-width:720px){#order-form>button[type=submit].primary-button{display:flex;width:max-content;max-width:100%;margin-left:auto;margin-right:auto}}
+
+/* Desktop order form: two contact fields on row one */
+@media(min-width:721px){#order-form .form-grid>label:nth-child(1),#order-form .form-grid>label:nth-child(2){grid-column:span 3}}
