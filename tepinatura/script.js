@@ -295,10 +295,9 @@ citySelect.addEventListener('change', async () => {
 loadProvinces();
 
 
-// Live SPX Regular shipping quote through the protected Supabase Edge Function.
+// Live SPX shipping quote through the protected Supabase Edge Function.
 const quantityInput = $('#order-form [name="quantity"]');
 const shippingSelect = $('#order-form [name="shipping"]');
-const postalInput = $('#order-form [name="postal"]');
 const locationCache = new Map();
 let currentShippingRate = null;
 let availableShippingRates = [];
@@ -456,7 +455,6 @@ quantityInput.addEventListener('input', () => {
 provinceSelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
 citySelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
 districtSelect.addEventListener('change', scheduleShippingQuote);
-postalInput.addEventListener('change', scheduleShippingQuote);
 shippingSelect.addEventListener('change', () => {
   currentShippingRate = availableShippingRates.find(rate =>
     rate.service_code === shippingSelect.value
