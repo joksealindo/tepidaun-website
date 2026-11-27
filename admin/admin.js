@@ -14,12 +14,19 @@ async function verifyAdmin(session){
  if(error||!user||user.app_metadata?.role!=="admin")return false;
  state.user=user;return true;
 }
+function showRecovery(message=""){
+ $("#recovery-screen").hidden=false;
+ $("#login-screen").hidden=true;
+ $("#app-screen").hidden=true;
+ if(message) $("#recovery-message").textContent=message;
+}
 async function boot(){
- await client.auth.getSession();
- if(window.location.hash.includes("type=recovery")){
-  $("#recovery-screen").hidden=false;
-  $("#login-screen").hidden=true;
-  $("#app-screen").hidden=true;
+ const hashParams=new URLSearchParams(window.location.hash.replace(/^#/,""));
+ const recoveryFromLink=hashParams.get("type")==="recovery";
+ if(recoveryFromLink) showRecovery("Tautan pemulihan terdeteksi. Silakan buat password baru.");
+ const {error}=await client.auth.getSession();
+ if(recoveryFromLink){
+  if(error) $("#recovery-message").textContent="Sesi pemulihan tidak dapat dibaca. Minta tautan reset password yang baru.";
   return;
  }
  showApp();
@@ -53,7 +60,10 @@ $("#login-form").addEventListener("submit",async e=>{
  showApp();await loadCatalog();
 });
 $("#logout-button").addEventListener("click",async()=>{await client.auth.signOut();state.user=null;showLogin("Anda sudah keluar.")});
-client.auth.onAuthStateChange(async(event,session)=>{if(event==="SIGNED_OUT"){state.user=null;showLogin()}});
+client.auth.onAuthStateChange((event,session)=>{
+ if(event==="PASSWORD_RECOVERY") showRecovery("Tautan valid. Silakan buat password baru.");
+ if(event==="SIGNED_OUT"){state.user=null;showLogin()}
+});
 function openView(name){
  document.querySelectorAll(".view").forEach(v=>v.hidden=true);
  $("#view-"+name).hidden=false;
@@ -160,3 +170,12 @@ $("#product-form").addEventListener("submit",async e=>{
  finally{save.disabled=false;save.textContent="Simpan produk"}
 });
 boot();
+
+$("#forgot-password").addEventListener("click",async()=>{
+ const email=$("#email").value.trim();
+ if(!email){$("#login-message").textContent="Masukkan alamat email akun admin terlebih dahulu.";$("#email").focus();return;}
+ const button=$("#forgot-password");button.disabled=true;button.textContent="Mengirim tautan…";
+ const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:"https://joksealindo.github.io/tepidaun-website/admin/"});
+ button.disabled=false;button.textContent="Lupa password?";
+ $("#login-message").textContent=error?"Tautan belum terkirim: "+error.message:"Tautan reset password dikirim. Buka email dan klik tautannya tanpa mengubah URL.";
+});
