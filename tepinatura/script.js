@@ -301,24 +301,41 @@ let destinationMarker = null;
 let destinationPoint = null;
 const destinationLatInput = $('#destination-latitude');
 const destinationLngInput = $('#destination-longitude');
-function setDestinationPoint(latlng) {
+
+function setDestinationPoint(latlng, panTo = false) {
   destinationPoint = { latitude: Number(latlng.lat), longitude: Number(latlng.lng) };
   destinationLatInput.value = destinationPoint.latitude.toFixed(6);
   destinationLngInput.value = destinationPoint.longitude.toFixed(6);
   $('#destination-coordinates').textContent = destinationPoint.latitude.toFixed(6) + ', ' + destinationPoint.longitude.toFixed(6);
-  if (destinationMarker) destinationMarker.setLatLng(latlng);
-  else destinationMarker = L.marker(latlng).addTo(destinationMap);
+
+  if (!destinationMarker) {
+    destinationMarker = L.marker(latlng, { draggable: true }).addTo(destinationMap);
+    destinationMarker.on('dragend', event => setDestinationPoint(event.target.getLatLng()));
+  } else {
+    destinationMarker.setLatLng(latlng);
+  }
+  if (panTo) destinationMap.panTo(latlng);
   scheduleShippingQuote();
 }
+
 if (window.L && $('#destination-map')) {
-  destinationMap = L.map('destination-map').setView([-7.303345, 110.172946], 9);
+  destinationMap = L.map('destination-map', { tap: true }).setView([-7.303345, 110.172946], 9);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, attribution: '&copy; OpenStreetMap'
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
   }).addTo(destinationMap);
   destinationMap.on('click', event => setDestinationPoint(event.latlng));
-  setTimeout(() => destinationMap.invalidateSize(), 250);
+  setTimeout(() => destinationMap.invalidateSize(true), 300);
+  window.addEventListener('resize', () => destinationMap && destinationMap.invalidateSize());
+} else {
+  $('#destination-coordinates').textContent = 'Peta gagal dimuat. Periksa koneksi internet.';
 }
+
 $('#use-current-location').addEventListener('click', () => {
+  if (!destinationMap) {
+    $('#form-feedback').textContent = 'Peta belum berhasil dimuat.';
+    return;
+  }
   if (!navigator.geolocation) {
     $('#form-feedback').textContent = 'Browser ini tidak mendukung akses lokasi.';
     return;
@@ -328,7 +345,7 @@ $('#use-current-location').addEventListener('click', () => {
     destinationMap.setView(point, 17);
     setDestinationPoint(point);
   }, () => {
-    $('#form-feedback').textContent = 'Lokasi tidak berhasil diakses. Silakan pilih titik langsung pada peta.';
+    $('#form-feedback').textContent = 'Lokasi tidak berhasil diakses. Silakan ketuk peta untuk memasang pin.';
   }, {enableHighAccuracy:true,timeout:12000});
 });
 
@@ -410,106 +427,121 @@ async function fetchShippingQuote() {
     resetShippingQuote('Berat produk belum diatur. Silakan hubungi admin.');
     return;
   }
-  if (!provinceSelect.value || !citySelect.value || !districtSelect.value) {
-    resetShippingQuote();
-    return;
-  }
 
   currentShippingRate = null;
   availableShippingRates = [];
   shippingQuoteLoading = true;
   shippingSelect.disabled = true;
   shippingSelect.innerHTML = '<option value="">Menghitung pilihan layanan…</option>';
-  $('#form-feedback').textContent = 'Mencari wilayah dan menghitung tarif pengiriman…';
+  $('#form-feedback').textContent = 'Menghitung tarif pengiriman yang tersedia…';
   updateOrderSummary();
 
-  try {
-    const destination = await getDestinationSubdistrict();
-    if (requestId !== quoteRequestId) return;
-    const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_PUBLISHABLE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
-      },
-      body: JSON.stringify({
-        action: 'rate',
-        destination,
-        weight: Math.ceil(Number(product.weightGrams) * quantity)
-      })
-    });
-    const result = await response.json();
-    if (requestId !== quoteRequestId) return;
-    if (!response.ok || !result.success) {
-      const diagnostic = [
-        result.code ? 'Kode: ' + result.code : '',
-        result.upstream_status ? 'HTTP upstream: ' + result.upstream_status : '',
-        result.request_id ? 'Request ID: ' + result.request_id : ''
-      ].filter(Boolean).join(' · ');
-      throw new Error((result.error || 'Tarif SPX belum dapat dihitung.') +
-        (diagnostic ? ' (' + diagnostic + ')' : ''));
-    }
-    const spxRates = (result.rates || []).filter(item =>
-      item.courier_code === 'spx' && Number.isFinite(Number(item.cost))
-    );
-    let biteshipRates = [];
-    if (destinationPoint) {
-      const dimensionsKnown = /5\s?l/i.test(product.name || '');
-      if (dimensionsKnown) {
-        const biteResponse = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':'Bearer '+SUPABASE_PUBLISHABLE_KEY},
-          body: JSON.stringify({
-            action:'biteship_rate',
-            destination:destinationPoint,
-            weight:Math.ceil(Number(product.weightGrams)*quantity),
-            quantity,
-            item:{name:product.name,value:Number(product.price)},
-            dimensions:{length:20,width:30,height:10}
-          })
-        });
-        const biteResult = await biteResponse.json();
-        if (biteResponse.ok && biteResult.success) biteshipRates = biteResult.rates || [];
-        else console.warn('Biteship rate:', biteResult.error || biteResponse.status);
+  const requestHeaders = {
+    'Content-Type': 'application/json',
+    'apikey': SUPABASE_PUBLISHABLE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
+  };
+  const weight = Math.ceil(Number(product.weightGrams) * quantity);
+  const dimensionsKnown = /5\s?l/i.test(product.name || '');
+  const tasks = [];
+  const errors = [];
+
+  // SPX remains on RajaOngkir and does not depend on the map pin.
+  if (provinceSelect.value && citySelect.value && districtSelect.value) {
+    tasks.push((async () => {
+      const destination = await getDestinationSubdistrict();
+      const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
+        method: 'POST',
+        headers: requestHeaders,
+        body: JSON.stringify({ action: 'rate', destination, weight })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Tarif SPX belum dapat dihitung.');
       }
-    }
-    const normalizedBiteship = biteshipRates.map((rate,index) => {
-      const courier = String(rate.courier_code || '').toLowerCase();
-      const service = String(rate.service_name || rate.service_code || '').toLowerCase();
-      let category = 'Reguler';
-      if (/cargo|jtr|gokil|big pack|jumbo|freight/i.test(service+' '+courier)) category='Cargo';
-      else if (/instant|instant|gosend|grab|borzo|lalamove/i.test(service+' '+courier)) category='Instant';
-      else if (/same.?day|sds/i.test(service+' '+courier)) category='Same Day';
-      else if (/hemat|economy|eko|econom/i.test(service+' '+courier)) category='Hemat';
-      return {...rate,service_code:'biteship_'+courier+'_'+(rate.service_code||index),category,source:'biteship'};
-    });
-    availableShippingRates = [...spxRates.map(rate=>({...rate,category:'Reguler'})),...normalizedBiteship]
-      .filter(item=>Number.isFinite(Number(item.cost)));
-    if (!availableShippingRates.length) {
-      resetShippingQuote('Belum ada layanan pengiriman yang tersedia untuk rute ini.');
-      return;
-    }
-    shippingQuoteLoading = false;
-    shippingSelect.innerHTML = '';
-    availableShippingRates.forEach((rate, index) => {
-      const option = document.createElement('option');
-      option.value = rate.service_code || ('spx_service_' + index);
-      const amount = Number(rate.discounted_cost ?? rate.cost);
-      const serviceLabel = rate.service_name || rate.courier_name || 'Kurir';
-      const etd = rate.etd_text ? ' · ' + rate.etd_text : '';
-      option.textContent = (rate.category || 'Reguler') + ' · ' + serviceLabel + etd + ' — ' + formatPrice(amount);
-      shippingSelect.append(option);
-    });
-    shippingSelect.disabled = false;
-    shippingSelect.selectedIndex = 0;
-    currentShippingRate = availableShippingRates[0];
-    $('#form-feedback').textContent = availableShippingRates.length + ' pilihan layanan pengiriman berhasil dihitung.';
-    updateOrderSummary();
-  } catch (error) {
-    if (requestId !== quoteRequestId) return;
-    resetShippingQuote(error.message || 'Gagal mengambil tarif SPX. Coba lagi.');
+      return (result.rates || [])
+        .filter(item => item.courier_code === 'spx' && Number.isFinite(Number(item.cost)))
+        .map(item => ({...item, category:'Reguler', source:'rajaongkir'}));
+    })().catch(error => {
+      errors.push('SPX: ' + (error.message || 'gagal dihitung'));
+      return [];
+    }));
+  } else {
+    errors.push('SPX: pilih provinsi, kabupaten/kota, dan kecamatan.');
   }
+
+  // Biteship is requested independently, as soon as a pin is selected.
+  if (destinationPoint && dimensionsKnown) {
+    tasks.push((async () => {
+      const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
+        method: 'POST',
+        headers: requestHeaders,
+        body: JSON.stringify({
+          action: 'biteship_rate',
+          destination: destinationPoint,
+          weight,
+          quantity,
+          item: {name: product.name, value: Number(product.price)},
+          dimensions: {length:20, width:30, height:10}
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Biteship belum dapat menghitung tarif.');
+      }
+      return (result.rates || []).map((rate, index) => {
+        const courier = String(rate.courier_code || '').toLowerCase();
+        const service = String(rate.service_name || rate.service_code || '').toLowerCase();
+        const serviceType = String(rate.service_type || '').toLowerCase();
+        const shippingType = String(rate.shipping_type || '').toLowerCase();
+        let category = 'Reguler';
+        if (shippingType === 'freight' || /cargo|jtr|gokil|big pack|jumbo|freight|truck/i.test(service+' '+courier)) category = 'Cargo';
+        else if (serviceType === 'instant' || /instant|gosend|grab express|borzo/i.test(service+' '+courier)) category = 'Instant';
+        else if (serviceType === 'same_day' || /same.?day|sds|sdp/i.test(service+' '+courier)) category = 'Same Day';
+        else if (serviceType === 'economy' || /hemat|economy|eko|econom|halu/i.test(service+' '+courier)) category = 'Hemat';
+        return {
+          ...rate,
+          service_code: 'biteship_' + courier + '_' + (rate.service_code || index) + '_' + index,
+          category,
+          source: 'biteship'
+        };
+      });
+    })().catch(error => {
+      errors.push('Ekspedisi lain: ' + (error.message || 'gagal dihitung'));
+      return [];
+    }));
+  } else if (!destinationPoint) {
+    errors.push('Ekspedisi lain: ketuk peta untuk memasang pin tujuan.');
+  } else {
+    errors.push('Ekspedisi lain: dimensi produk ini belum diatur.');
+  }
+
+  const resultSets = await Promise.all(tasks);
+  if (requestId !== quoteRequestId) return;
+  availableShippingRates = resultSets.flat().filter(item => Number.isFinite(Number(item.cost)));
+
+  if (!availableShippingRates.length) {
+    resetShippingQuote(errors.join(' '));
+    return;
+  }
+
+  shippingQuoteLoading = false;
+  shippingSelect.innerHTML = '';
+  availableShippingRates.forEach((rate, index) => {
+    const option = document.createElement('option');
+    option.value = rate.service_code || ('shipping_service_' + index);
+    const amount = Number(rate.discounted_cost ?? rate.cost);
+    const serviceLabel = (rate.courier_name ? rate.courier_name + ' · ' : '') + (rate.service_name || 'Layanan');
+    const etd = rate.etd_text ? ' · ' + rate.etd_text : '';
+    option.textContent = (rate.category || 'Reguler') + ' · ' + serviceLabel + etd + ' — ' + formatPrice(amount);
+    shippingSelect.append(option);
+  });
+  shippingSelect.disabled = false;
+  shippingSelect.selectedIndex = 0;
+  currentShippingRate = availableShippingRates[0];
+  $('#form-feedback').textContent = availableShippingRates.length +
+    ' pilihan layanan berhasil dihitung.' + (errors.length ? ' ' + errors.join(' ') : '');
+  updateOrderSummary();
 }
 function scheduleShippingQuote() {
   clearTimeout(quoteTimer);
