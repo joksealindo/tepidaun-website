@@ -54,3 +54,6 @@
 
 /* Match desktop shipping and order-submit button widths */
 @media(min-width:721px){.shipping-check-row .primary-button,#order-form>button[type=submit].primary-button{width:190px;min-width:190px}}
+
+/* Desktop: shipping selector fills the space to the right of the quote button */
+@media(min-width:721px){.shipping-check-row{grid-template-columns:190px minmax(0,1fr)}.shipping-check-row .primary-button{width:190px;min-width:190px}.shipping-select-label{width:100%;min-width:0}}
