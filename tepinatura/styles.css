@@ -51,3 +51,6 @@
 
 /* Desktop order form: two contact fields on row one */
 @media(min-width:721px){#order-form .form-grid>label:nth-child(1),#order-form .form-grid>label:nth-child(2){grid-column:span 3}}
+
+/* Match desktop shipping and order-submit button widths */
+@media(min-width:721px){.shipping-check-row .primary-button,#order-form>button[type=submit].primary-button{width:190px;min-width:190px}}
