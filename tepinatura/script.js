@@ -437,7 +437,14 @@ async function fetchShippingQuote() {
     });
     const result = await response.json();
     if (requestId !== quoteRequestId) return;
-    if (!response.ok || !result.success) throw new Error(result.error || 'Tarif SPX belum dapat dihitung.');
+    if (!response.ok || !result.success) {
+      const diagnostic = [
+        result.code ? 'Kode: ' + result.code : '',
+        result.upstream_status ? 'HTTP upstream: ' + result.upstream_status : ''
+      ].filter(Boolean).join(' · ');
+      throw new Error((result.error || 'Tarif SPX belum dapat dihitung.') +
+        (diagnostic ? ' (' + diagnostic + ')' : ''));
+    }
     const rate = (result.rates || []).find(item => item.courier_code === 'spx');
     if (!rate) {
       resetShippingQuote('SPX Reguler belum tersedia untuk rute kecamatan ini.');
