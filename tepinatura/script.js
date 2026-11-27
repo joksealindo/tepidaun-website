@@ -299,6 +299,7 @@ loadProvinces();
 const quantityInput = $('#order-form [name="quantity"]');
 const shippingSelect = $('#order-form [name="shipping"]');
 const postalInput = $('#order-form [name="postal"]');
+const locationCache = new Map();
 let currentShippingRate = null;
 let shippingQuoteLoading = false;
 let quoteTimer = null;
@@ -323,7 +324,7 @@ function updateOrderSummary() {
     ? (productTotal === null ? '—' : 'Menunggu ongkir')
     : formatPrice(productTotal + shippingCost);
 }
-function resetShippingQuote(message = 'Lengkapi produk, jumlah, dan kode pos tujuan.') {
+function resetShippingQuote(message = 'Pilih provinsi, kabupaten/kota, kecamatan, dan produk untuk menghitung ongkir.') {
   currentShippingRate = null;
   shippingQuoteLoading = false;
   shippingSelect.innerHTML = '<option value="">SPX Reguler — menunggu tarif</option>';
@@ -331,20 +332,58 @@ function resetShippingQuote(message = 'Lengkapi produk, jumlah, dan kode pos tuj
   $('#form-feedback').textContent = message;
   updateOrderSummary();
 }
+async function getDestinationSubdistrict() {
+  const provinceName = provinceSelect.selectedOptions[0]?.textContent?.trim() || '';
+  const cityName = citySelect.selectedOptions[0]?.textContent?.trim() || '';
+  const districtName = districtSelect.selectedOptions[0]?.textContent?.trim() || '';
+  if (!provinceSelect.value || !citySelect.value || !districtSelect.value) {
+    throw new Error('Pilih provinsi, kabupaten/kota, dan kecamatan terlebih dahulu.');
+  }
+  const cacheKey = [provinceName, cityName, districtName].join('|').toLocaleLowerCase('id-ID');
+  if (locationCache.has(cacheKey)) return locationCache.get(cacheKey);
+
+  const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_PUBLISHABLE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
+    },
+    body: JSON.stringify({ action: 'location_search', query: districtName })
+  });
+  const result = await response.json();
+  if (!response.ok || !result.success) throw new Error(result.error || 'Pencarian kecamatan ke layanan ongkir gagal.');
+
+  const normalize = value => String(value || '').trim().toLocaleLowerCase('id-ID')
+    .replace(/^(kabupaten|kota administrasi|kota)\\s+/i, '');
+  const matches = (result.locations || []).filter(location =>
+    normalize(location.subdistrict_name) === normalize(districtName) &&
+    normalize(location.city_name) === normalize(cityName) &&
+    normalize(location.province_name) === normalize(provinceName)
+  );
+  if (matches.length !== 1) {
+    throw new Error(matches.length
+      ? 'Kecamatan tujuan ditemukan lebih dari satu. Mohon periksa pilihan kabupaten/kota.'
+      : 'Kecamatan tidak ditemukan pada database layanan ongkir. Pastikan pilihan wilayah benar.');
+  }
+  const selected = matches[0];
+  if (!selected.subdistrict_id) throw new Error('ID kecamatan tujuan tidak tersedia dari layanan ongkir.');
+  locationCache.set(cacheKey, selected);
+  return selected;
+}
 async function fetchShippingQuote() {
   const {product, quantity} = selectedProductAndQuantity();
-  const postal = postalInput.value.trim();
   const requestId = ++quoteRequestId;
-  if (!product || !postal) {
+  if (!product) {
     resetShippingQuote();
-    return;
-  }
-  if (!/^[0-9]{5}$/.test(postal)) {
-    resetShippingQuote('Masukkan kode pos tujuan sebanyak 5 digit.');
     return;
   }
   if (!Number.isFinite(Number(product.weightGrams)) || Number(product.weightGrams) < 1) {
     resetShippingQuote('Berat produk belum diatur. Silakan hubungi admin.');
+    return;
+  }
+  if (!provinceSelect.value || !citySelect.value || !districtSelect.value) {
+    resetShippingQuote();
     return;
   }
 
@@ -352,10 +391,12 @@ async function fetchShippingQuote() {
   shippingQuoteLoading = true;
   shippingSelect.disabled = true;
   shippingSelect.innerHTML = '<option value="">Menghitung ongkir SPX Reguler…</option>';
-  $('#form-feedback').textContent = 'Sedang menghitung ongkir SPX Reguler…';
+  $('#form-feedback').textContent = 'Mencari kecamatan dan menghitung ongkir SPX Reguler…';
   updateOrderSummary();
 
   try {
+    const destination = await getDestinationSubdistrict();
+    if (requestId !== quoteRequestId) return;
     const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
       method: 'POST',
       headers: {
@@ -364,18 +405,18 @@ async function fetchShippingQuote() {
         'Authorization': 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
       },
       body: JSON.stringify({
-        destination_postal_code: postal,
+        action: 'rate',
+        destination_subdistrict_id: destination.subdistrict_id,
+        destination_subdistrict_name: destination.subdistrict_name,
         weight: Math.ceil(Number(product.weightGrams) * quantity)
       })
     });
     const result = await response.json();
     if (requestId !== quoteRequestId) return;
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Tarif SPX belum dapat dihitung.');
-    }
+    if (!response.ok || !result.success) throw new Error(result.error || 'Tarif SPX belum dapat dihitung.');
     const rate = (result.rates || []).find(item => item.courier_code === 'spx');
     if (!rate) {
-      resetShippingQuote('SPX Reguler belum tersedia untuk rute tujuan ini.');
+      resetShippingQuote('SPX Reguler belum tersedia untuk rute kecamatan ini.');
       return;
     }
     currentShippingRate = rate;
@@ -408,8 +449,10 @@ quantityInput.addEventListener('input', () => {
   updateOrderSummary();
   scheduleShippingQuote();
 });
+provinceSelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
+citySelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
+districtSelect.addEventListener('change', scheduleShippingQuote);
 postalInput.addEventListener('change', scheduleShippingQuote);
-postalInput.addEventListener('blur', scheduleShippingQuote);
 shippingSelect.addEventListener('change', updateOrderSummary);
 
 // Validate the live quote before accepting the order details.
@@ -421,7 +464,7 @@ $('#order-form').addEventListener('submit', event => {
     return;
   }
   if (!currentShippingRate) {
-    $('#form-feedback').textContent = 'Tarif SPX belum tersedia. Pastikan kode pos tujuan benar dan tunggu perhitungan selesai.';
+    $('#form-feedback').textContent = 'Tarif SPX belum tersedia. Pastikan pilihan kecamatan tujuan benar dan tunggu perhitungan selesai.';
     return;
   }
   const {product, quantity} = selectedProductAndQuantity();
