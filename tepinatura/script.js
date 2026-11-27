@@ -301,6 +301,7 @@ const shippingSelect = $('#order-form [name="shipping"]');
 const postalInput = $('#order-form [name="postal"]');
 const locationCache = new Map();
 let currentShippingRate = null;
+let availableShippingRates = [];
 let shippingQuoteLoading = false;
 let quoteTimer = null;
 let quoteRequestId = 0;
@@ -326,8 +327,9 @@ function updateOrderSummary() {
 }
 function resetShippingQuote(message = 'Pilih provinsi, kabupaten/kota, kecamatan, dan produk untuk menghitung ongkir.') {
   currentShippingRate = null;
+  availableShippingRates = [];
   shippingQuoteLoading = false;
-  shippingSelect.innerHTML = '<option value="">SPX Reguler — menunggu tarif</option>';
+  shippingSelect.innerHTML = '<option value="">SPX — menunggu tarif</option>';
   shippingSelect.disabled = true;
   $('#form-feedback').textContent = message;
   updateOrderSummary();
@@ -378,10 +380,11 @@ async function fetchShippingQuote() {
   }
 
   currentShippingRate = null;
+  availableShippingRates = [];
   shippingQuoteLoading = true;
   shippingSelect.disabled = true;
-  shippingSelect.innerHTML = '<option value="">Menghitung ongkir SPX Reguler…</option>';
-  $('#form-feedback').textContent = 'Mencari data wilayah dan menghitung ongkir SPX Reguler…';
+  shippingSelect.innerHTML = '<option value="">Menghitung pilihan layanan SPX…</option>';
+  $('#form-feedback').textContent = 'Mencari data wilayah dan menghitung pilihan layanan SPX…';
   updateOrderSummary();
 
   try {
@@ -411,25 +414,29 @@ async function fetchShippingQuote() {
       throw new Error((result.error || 'Tarif SPX belum dapat dihitung.') +
         (diagnostic ? ' (' + diagnostic + ')' : ''));
     }
-    const rate = (result.rates || []).find(item => item.courier_code === 'spx');
-    if (!rate) {
-      resetShippingQuote('SPX Reguler belum tersedia untuk rute kecamatan ini.');
+    availableShippingRates = (result.rates || []).filter(item =>
+      item.courier_code === 'spx' && Number.isFinite(Number(item.cost))
+    );
+    if (!availableShippingRates.length) {
+      resetShippingQuote('Belum ada layanan SPX yang tersedia untuk rute kecamatan ini.');
       return;
     }
-    currentShippingRate = rate;
     shippingQuoteLoading = false;
-    const amount = Number(rate.discounted_cost ?? rate.cost);
-    const serviceLabel = rate.service_name || 'SPX Reguler';
-    const etd = rate.etd_text ? ' · ' + rate.etd_text : '';
     shippingSelect.innerHTML = '';
-    const option = document.createElement('option');
-    option.value = rate.service_code || 'spx_regular';
-    option.textContent = serviceLabel + etd + ' — ' + formatPrice(amount);
-    shippingSelect.append(option);
+    availableShippingRates.forEach((rate, index) => {
+      const option = document.createElement('option');
+      option.value = rate.service_code || ('spx_service_' + index);
+      const amount = Number(rate.discounted_cost ?? rate.cost);
+      const serviceLabel = rate.service_name || 'SPX';
+      const etd = rate.etd_text ? ' · ' + rate.etd_text : '';
+      option.textContent = serviceLabel + etd + ' — ' + formatPrice(amount);
+      shippingSelect.append(option);
+    });
     shippingSelect.disabled = false;
-    shippingSelect.value = option.value;
-    $('#form-feedback').textContent = rate.source === 'cache'
-      ? 'Tarif SPX berhasil dimuat (data cache).'
+    shippingSelect.selectedIndex = 0;
+    currentShippingRate = availableShippingRates[0];
+    $('#form-feedback').textContent = availableShippingRates.length > 1
+      ? availableShippingRates.length + ' pilihan layanan SPX berhasil dihitung.'
       : 'Tarif SPX berhasil dihitung.';
     updateOrderSummary();
   } catch (error) {
@@ -450,7 +457,12 @@ provinceSelect.addEventListener('change', () => { locationCache.clear(); schedul
 citySelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
 districtSelect.addEventListener('change', scheduleShippingQuote);
 postalInput.addEventListener('change', scheduleShippingQuote);
-shippingSelect.addEventListener('change', updateOrderSummary);
+shippingSelect.addEventListener('change', () => {
+  currentShippingRate = availableShippingRates.find(rate =>
+    rate.service_code === shippingSelect.value
+  ) || null;
+  updateOrderSummary();
+});
 
 // Validate the live quote before accepting the order details.
 $('#order-form').addEventListener('submit', event => {
