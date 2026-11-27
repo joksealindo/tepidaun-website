@@ -363,21 +363,36 @@ async function getDestinationSubdistrict() {
     normalize(location.city) === normalize(cityName) &&
     normalize(location.province) === normalize(provinceName)
   );
-  if (matches.length !== 1) {
-    const candidates = (result.locations || []).slice(0, 8).map(location =>
-      location.label || [location.district, location.city, location.province].filter(Boolean).join(', ')
+
+  // Search results can contain multiple lower-level locations that share
+  // the same province/city/district. The rate request uses only these
+  // three fields, so compare unique rate destinations rather than row count.
+  const uniqueDestinations = [...new Map(matches.map(location => {
+    const destination = {
+      province: location.province,
+      city: location.city,
+      district: location.district
+    };
+    const key = [destination.province, destination.city, destination.district]
+      .map(normalize).join('|');
+    return [key, destination];
+  })).values()];
+
+  if (uniqueDestinations.length !== 1) {
+    const relevant = matches.length ? matches : (result.locations || []);
+    const candidates = relevant.slice(0, 8).map(location =>
+      location.label || [location.subdistrict, location.district, location.city, location.province]
+        .filter(Boolean).join(', ')
     );
-    const detail = candidates.length ? ' Kandidat API: ' + candidates.join(' | ') : ' API tidak mengembalikan hasil untuk: ' + districtName;
-    throw new Error(matches.length
-      ? 'Lokasi tujuan ditemukan lebih dari satu.' + detail
+    const detail = candidates.length
+      ? ' Kandidat API' + (matches.length ? ' yang cocok' : '') + ': ' + candidates.join(' | ')
+      : ' API tidak mengembalikan hasil untuk: ' + districtName;
+    throw new Error(uniqueDestinations.length > 1
+      ? 'Lokasi tujuan masih memiliki lebih dari satu kombinasi wilayah.' + detail
       : 'Lokasi kecamatan belum cocok dengan data layanan ongkir.' + detail);
   }
-  const selected = matches[0];
-  const destination = {
-    province: selected.province,
-    city: selected.city,
-    district: selected.district
-  };
+
+  const destination = uniqueDestinations[0];
   locationCache.set(cacheKey, destination);
   return destination;
 }
