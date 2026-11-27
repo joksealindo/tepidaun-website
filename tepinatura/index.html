@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
   <header class="shop-header">
@@ -80,6 +81,14 @@
           <label>Kecamatan<select name="district" id="district" required disabled><option value="">Pilih kecamatan</option></select></label>
           <label>Layanan pengiriman<select name="shipping" required disabled><option value="">SPX — menunggu tarif</option></select></label>
           <label class="wide">Alamat lengkap<input name="address" required placeholder="Nama jalan, nomor rumah, RT/RW, patokan"></label>
+          <div class="wide destination-map-field">
+            <span class="map-label">Titik lokasi penerima</span>
+            <p class="map-help">Geser peta lalu klik lokasi rumah atau titik penerimaan paket.</p>
+            <div id="destination-map" role="application" aria-label="Peta untuk memilih lokasi penerima"></div>
+            <div class="map-location-row"><span id="destination-coordinates">Belum memilih titik lokasi</span><button type="button" id="use-current-location">Gunakan lokasi saya</button></div>
+            <input type="hidden" name="destination_latitude" id="destination-latitude">
+            <input type="hidden" name="destination_longitude" id="destination-longitude">
+          </div>
         </div>
         <div class="order-summary" aria-live="polite">
           <div><span>Harga produk</span><strong id="summary-product-price">—</strong></div>
@@ -102,6 +111,7 @@
     <button id="cart-checkout" class="primary-button" disabled>Lanjut ke pemesanan <span>›</span></button>
   </aside>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js?v=20261127-17"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js?v=20261127-18"></script>
 </body>
 </html>
