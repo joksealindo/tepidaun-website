@@ -126,7 +126,7 @@ function renderProducts(list = products) {
 async function loadProducts() {
   const {data, error} = await catalogClient
     .from('products')
-    .select('id,name,short_description,description,price,image_path,sort_order,product_categories!inner(name,is_active)')
+    .select('id,name,short_description,description,price,weight_grams,image_path,sort_order,product_categories!inner(name,is_active)')
     .eq('is_published', true)
     .eq('product_categories.is_active', true)
     .order('sort_order', {ascending:true});
@@ -143,6 +143,7 @@ async function loadProducts() {
     category: row.product_categories.name,
     description: row.short_description || row.description || '',
     price: row.price,
+    weightGrams: row.weight_grams || 0,
     image: row.image_path ? catalogClient.storage.from('product-images').getPublicUrl(row.image_path).data.publicUrl : ''
   })));
   renderProducts();
@@ -293,6 +294,22 @@ citySelect.addEventListener('change', async () => {
 });
 loadProvinces();
 
+
+// Order price summary. Shipping stays unquoted until an authorized SPX tariff source is connected.
+const quantityInput = $('#order-form [name="quantity"]');
+const shippingSelect = $('#order-form [name="shipping"]');
+function updateOrderSummary() {
+  const selected = products.find(p => p.id === productSelect.value);
+  const quantity = Math.max(1, Number(quantityInput.value) || 1);
+  const productTotal = selected ? Number(selected.price) * quantity : null;
+  $('#summary-product-price').textContent = productTotal === null ? '—' : formatPrice(productTotal);
+  $('#summary-shipping').textContent = shippingSelect.value ? 'Belum tersedia' : 'Pilih layanan';
+  $('#summary-total').textContent = productTotal === null ? '—' : 'Menunggu ongkir';
+}
+productSelect.addEventListener('change', updateOrderSummary);
+quantityInput.addEventListener('input', updateOrderSummary);
+shippingSelect.addEventListener('change', updateOrderSummary);
+
 // Order submission prepares a WhatsApp-ready summary; replace the number with Tepidaun's official contact before launch.
 $('#order-form').addEventListener('submit', event => {
   event.preventDefault();
@@ -301,7 +318,7 @@ $('#order-form').addEventListener('submit', event => {
     $('#form-feedback').textContent = 'Silakan pilih produk terlebih dahulu.';
     return;
   }
-  $('#form-feedback').textContent = 'Detail pesanan sudah terisi. Hubungkan nomor WhatsApp resmi Tepidaun untuk mengaktifkan pengiriman pesanan.';
+  $('#form-feedback').textContent = 'Estimasi ongkir SPX belum tersedia karena akses tarif SPX di luar Shopee belum terhubung.';
 });
 renderProducts();
 renderCart();
