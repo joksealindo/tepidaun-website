@@ -440,7 +440,8 @@ async function fetchShippingQuote() {
     if (!response.ok || !result.success) {
       const diagnostic = [
         result.code ? 'Kode: ' + result.code : '',
-        result.upstream_status ? 'HTTP upstream: ' + result.upstream_status : ''
+        result.upstream_status ? 'HTTP upstream: ' + result.upstream_status : '',
+        result.request_id ? 'Request ID: ' + result.request_id : ''
       ].filter(Boolean).join(' · ');
       throw new Error((result.error || 'Tarif SPX belum dapat dihitung.') +
         (diagnostic ? ' (' + diagnostic + ')' : ''));
