@@ -315,7 +315,7 @@ function setDestinationPoint(latlng, panTo = false) {
     destinationMarker.setLatLng(latlng);
   }
   if (panTo) destinationMap.panTo(latlng);
-  scheduleShippingQuote();
+  invalidateShippingQuote('Titik lokasi penerima berubah. Klik Cek Ongkos Kirim untuk menghitung ulang.');
 }
 
 if (window.L && $('#destination-map')) {
@@ -349,14 +349,14 @@ $('#use-current-location').addEventListener('click', () => {
   }, {enableHighAccuracy:true,timeout:12000});
 });
 
-// Live SPX shipping quote through the protected Supabase Edge Function.
+// Shipping quotes are requested only after the buyer presses the check button.
 const quantityInput = $('#order-form [name="quantity"]');
 const shippingSelect = $('#order-form [name="shipping"]');
 const locationCache = new Map();
 let currentShippingRate = null;
 let availableShippingRates = [];
 let shippingQuoteLoading = false;
-let quoteTimer = null;
+const shippingCheckButton = $('#check-shipping-rate');
 let quoteRequestId = 0;
 
 function selectedProductAndQuantity() {
@@ -378,10 +378,12 @@ function updateOrderSummary() {
     ? (productTotal === null ? '—' : 'Menunggu ongkir')
     : formatPrice(productTotal + shippingCost);
 }
-function resetShippingQuote(message = 'Pilih produk, wilayah tujuan, dan titik peta untuk menghitung ongkir.') {
+function resetShippingQuote(message = 'Pilih produk, wilayah tujuan, dan titik peta, lalu klik Cek Ongkos Kirim.') {
   currentShippingRate = null;
   availableShippingRates = [];
   shippingQuoteLoading = false;
+  shippingCheckButton.disabled = false;
+  shippingCheckButton.textContent = 'Cek Ongkos Kirim';
   shippingSelect.innerHTML = '<option value="">Menunggu pilihan layanan</option>';
   shippingSelect.disabled = true;
   $('#form-feedback').textContent = message;
@@ -417,6 +419,7 @@ async function getDestinationSubdistrict() {
   return result.destination;
 }
 async function fetchShippingQuote() {
+  if (shippingQuoteLoading) return;
   const {product, quantity} = selectedProductAndQuantity();
   const requestId = ++quoteRequestId;
   if (!product) {
@@ -431,6 +434,8 @@ async function fetchShippingQuote() {
   currentShippingRate = null;
   availableShippingRates = [];
   shippingQuoteLoading = true;
+  shippingCheckButton.disabled = true;
+  shippingCheckButton.textContent = 'Menghitung Ongkir…';
   shippingSelect.disabled = true;
   shippingSelect.innerHTML = '<option value="">Menghitung pilihan layanan…</option>';
   $('#form-feedback').textContent = 'Menghitung tarif pengiriman yang tersedia…';
@@ -470,7 +475,7 @@ async function fetchShippingQuote() {
     errors.push('SPX: pilih provinsi, kabupaten/kota, dan kecamatan.');
   }
 
-  // Biteship is requested independently, as soon as a pin is selected.
+  // Biteship is requested independently when the buyer explicitly checks shipping.
   if (destinationPoint && dimensionsKnown) {
     tasks.push((async () => {
       const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
@@ -526,6 +531,8 @@ async function fetchShippingQuote() {
   }
 
   shippingQuoteLoading = false;
+  shippingCheckButton.disabled = false;
+  shippingCheckButton.textContent = 'Hitung Ulang Ongkir';
   shippingSelect.innerHTML = '';
   availableShippingRates.forEach((rate, index) => {
     const option = document.createElement('option');
@@ -543,18 +550,25 @@ async function fetchShippingQuote() {
     ' pilihan layanan berhasil dihitung.' + (errors.length ? ' ' + errors.join(' ') : '');
   updateOrderSummary();
 }
-function scheduleShippingQuote() {
-  clearTimeout(quoteTimer);
-  quoteTimer = setTimeout(fetchShippingQuote, 450);
+function invalidateShippingQuote(message = 'Pilihan berubah. Klik Cek Ongkos Kirim untuk menghitung ulang.') {
+  quoteRequestId += 1;
+  resetShippingQuote(message);
 }
-productSelect.addEventListener('change', scheduleShippingQuote);
+shippingCheckButton.addEventListener('click', fetchShippingQuote);
+productSelect.addEventListener('change', () => invalidateShippingQuote());
 quantityInput.addEventListener('input', () => {
   updateOrderSummary();
-  scheduleShippingQuote();
+  invalidateShippingQuote();
 });
-provinceSelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
-citySelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
-districtSelect.addEventListener('change', scheduleShippingQuote);
+provinceSelect.addEventListener('change', () => {
+  locationCache.clear();
+  invalidateShippingQuote('Provinsi berubah. Pilih kembali kabupaten/kota dan kecamatan, lalu klik Cek Ongkos Kirim.');
+});
+citySelect.addEventListener('change', () => {
+  locationCache.clear();
+  invalidateShippingQuote('Kabupaten/kota berubah. Pilih kecamatan, lalu klik Cek Ongkos Kirim.');
+});
+districtSelect.addEventListener('change', () => invalidateShippingQuote());
 shippingSelect.addEventListener('change', () => {
   currentShippingRate = availableShippingRates.find(rate =>
     rate.service_code === shippingSelect.value
@@ -571,7 +585,7 @@ $('#order-form').addEventListener('submit', event => {
     return;
   }
   if (!currentShippingRate) {
-    $('#form-feedback').textContent = 'Tarif pengiriman belum tersedia. Pastikan wilayah dan pin tujuan sudah dipilih.';
+    $('#form-feedback').textContent = 'Tarif pengiriman belum tersedia. Lengkapi wilayah dan pin tujuan, lalu klik Cek Ongkos Kirim.';
     return;
   }
   const {product, quantity} = selectedProductAndQuantity();
