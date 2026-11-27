@@ -79,12 +79,12 @@
           <label>Provinsi<select name="province" id="province" required><option value="">Pilih provinsi</option></select></label>
           <label>Kabupaten / Kota<select name="city" id="city" required disabled><option value="">Pilih kabupaten/kota</option></select></label>
           <label>Kecamatan<select name="district" id="district" required disabled><option value="">Pilih kecamatan</option></select></label>
-          <label>Desa / Kelurahan<select name="village" id="village" required disabled><option value="">Pilih desa/kelurahan</option></select></label>
+          <label>Desa / Kelurahan<input name="village" id="village" required placeholder="Ketik nama desa/kelurahan"></label>
           <label class="wide">Alamat lengkap<input name="address" required placeholder="Nama jalan, nomor rumah, RT/RW, patokan"></label>
           <label>Kode pos<input name="postal" inputmode="numeric" placeholder="Kode pos"></label>
           <label>Catatan pesanan<input name="notes" placeholder="Opsional"></label>
         </div>
-        <p class="form-note">Pilihan wilayah akan diaktifkan setelah data administrasi wilayah Indonesia dimasukkan. Ketersediaan layanan SPX dan ongkos kirim akan dikonfirmasi sebelum pembayaran.</p>
+        <p class="form-note">Pilih provinsi, kabupaten/kota, dan kecamatan. Desa/kelurahan sementara diisi manual. Ketersediaan layanan SPX dan ongkos kirim akan dikonfirmasi sebelum pembayaran.</p>
         <button type="submit" class="primary-button">Kirim detail pesanan <span>›</span></button>
         <p class="form-feedback" id="form-feedback" role="status"></p>
       </form>
@@ -100,6 +100,6 @@
     <button id="cart-checkout" class="primary-button" disabled>Lanjut ke pemesanan <span>›</span></button>
   </aside>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js?v=20261126-7"></script>
+  <script src="script.js?v=20261127-1"></script>
 </body>
 </html>
