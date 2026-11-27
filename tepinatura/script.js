@@ -300,6 +300,7 @@ const quantityInput = $('#order-form [name="quantity"]');
 const shippingSelect = $('#order-form [name="shipping"]');
 const postalInput = $('#order-form [name="postal"]');
 let currentShippingRate = null;
+let shippingQuoteLoading = false;
 let quoteTimer = null;
 let quoteRequestId = 0;
 
@@ -316,7 +317,7 @@ function updateOrderSummary() {
     : null;
   $('#summary-product-price').textContent = productTotal === null ? '—' : formatPrice(productTotal);
   $('#summary-shipping').textContent = shippingCost === null
-    ? (shippingSelect.disabled ? 'Mengambil tarif…' : 'Menunggu tarif SPX')
+    ? (shippingQuoteLoading ? 'Mengambil tarif…' : 'Belum tersedia')
     : formatPrice(shippingCost);
   $('#summary-total').textContent = productTotal === null || shippingCost === null
     ? (productTotal === null ? '—' : 'Menunggu ongkir')
@@ -324,6 +325,7 @@ function updateOrderSummary() {
 }
 function resetShippingQuote(message = 'Lengkapi produk, jumlah, dan kode pos tujuan.') {
   currentShippingRate = null;
+  shippingQuoteLoading = false;
   shippingSelect.innerHTML = '<option value="">SPX Reguler — menunggu tarif</option>';
   shippingSelect.disabled = true;
   $('#form-feedback').textContent = message;
@@ -347,6 +349,7 @@ async function fetchShippingQuote() {
   }
 
   currentShippingRate = null;
+  shippingQuoteLoading = true;
   shippingSelect.disabled = true;
   shippingSelect.innerHTML = '<option value="">Menghitung ongkir SPX Reguler…</option>';
   $('#form-feedback').textContent = 'Sedang menghitung ongkir SPX Reguler…';
@@ -376,6 +379,7 @@ async function fetchShippingQuote() {
       return;
     }
     currentShippingRate = rate;
+    shippingQuoteLoading = false;
     const amount = Number(rate.discounted_cost ?? rate.cost);
     const serviceLabel = rate.service_name || 'SPX Reguler';
     const etd = rate.etd_text ? ' · ' + rate.etd_text : '';
