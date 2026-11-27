@@ -212,13 +212,86 @@ $('#search-form').addEventListener('submit', event => {
   document.querySelector('.category')?.scrollIntoView({behavior:'smooth'});
 });
 
-// Address dataset is intentionally not fabricated. Populate from a maintained Indonesian administrative-area dataset.
-const addressSelects = ['province','city','district','village'].map(id => $('#'+id));
-addressSelects[0].innerHTML = '<option value="">Data provinsi belum dipasang</option>';
-addressSelects.slice(1).forEach((select, i) => {
-  select.innerHTML = '<option value="">Menunggu pilihan sebelumnya</option>';
-  select.disabled = true;
+// Indonesian administrative areas: province -> regency/city -> district.
+// Village data is not yet imported, so the village field remains a manual text input.
+const provinceSelect = $('#province');
+const citySelect = $('#city');
+const districtSelect = $('#district');
+
+function resetRegionSelect(select, placeholder) {
+  select.innerHTML = '';
+  const option = document.createElement('option');
+  option.value = '';
+  option.textContent = placeholder;
+  select.append(option);
+  select.value = '';
+}
+function fillRegionSelect(select, rows, placeholder) {
+  resetRegionSelect(select, placeholder);
+  rows.forEach(row => {
+    const option = document.createElement('option');
+    option.value = row.id;
+    option.textContent = row.name;
+    select.append(option);
+  });
+  select.disabled = rows.length === 0;
+}
+async function loadProvinces() {
+  resetRegionSelect(provinceSelect, 'Memuat provinsi...');
+  provinceSelect.disabled = true;
+  const {data, error} = await catalogClient
+    .from('regions_provinces')
+    .select('id,name')
+    .order('name', {ascending:true});
+  if (error) {
+    resetRegionSelect(provinceSelect, 'Provinsi gagal dimuat');
+    console.error('Tepinatura regions (provinces):', error.message);
+    $('#form-feedback').textContent = 'Data wilayah belum dapat dimuat. Silakan muat ulang halaman.';
+    return;
+  }
+  fillRegionSelect(provinceSelect, data || [], 'Pilih provinsi');
+}
+provinceSelect.addEventListener('change', async () => {
+  resetRegionSelect(citySelect, 'Memuat kabupaten/kota...');
+  resetRegionSelect(districtSelect, 'Pilih kecamatan');
+  citySelect.disabled = true;
+  districtSelect.disabled = true;
+  if (!provinceSelect.value) {
+    resetRegionSelect(citySelect, 'Pilih kabupaten/kota');
+    return;
+  }
+  const {data, error} = await catalogClient
+    .from('regions_regencies')
+    .select('id,name')
+    .eq('province_id', provinceSelect.value)
+    .order('name', {ascending:true});
+  if (error) {
+    resetRegionSelect(citySelect, 'Kabupaten/kota gagal dimuat');
+    console.error('Tepinatura regions (regencies):', error.message);
+    return;
+  }
+  fillRegionSelect(citySelect, data || [], 'Pilih kabupaten/kota');
 });
+citySelect.addEventListener('change', async () => {
+  resetRegionSelect(districtSelect, 'Memuat kecamatan...');
+  districtSelect.disabled = true;
+  if (!citySelect.value) {
+    resetRegionSelect(districtSelect, 'Pilih kecamatan');
+    return;
+  }
+  const {data, error} = await catalogClient
+    .from('regions_districts')
+    .select('id,name')
+    .eq('regency_id', citySelect.value)
+    .order('name', {ascending:true});
+  if (error) {
+    resetRegionSelect(districtSelect, 'Kecamatan gagal dimuat');
+    console.error('Tepinatura regions (districts):', error.message);
+    return;
+  }
+  fillRegionSelect(districtSelect, data || [], 'Pilih kecamatan');
+});
+loadProvinces();
 
 // Order submission prepares a WhatsApp-ready summary; replace the number with Tepidaun's official contact before launch.
 $('#order-form').addEventListener('submit', event => {
