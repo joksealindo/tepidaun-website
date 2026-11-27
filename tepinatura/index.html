@@ -74,12 +74,11 @@
         <div class="form-grid">
           <label>Nama penerima<input name="name" required placeholder="Nama lengkap"></label>
           <label>Nomor WhatsApp<input name="phone" required inputmode="tel" placeholder="08xxxxxxxxxx"></label>
-          <label>Produk yang dipesan<select name="product" id="order-product" required><option value="">Pilih produk</option></select></label>
-          <label>Jumlah<input name="quantity" type="number" min="1" value="1" required></label>
-          <label>Provinsi<select name="province" id="province" required><option value="">Pilih provinsi</option></select></label>
-          <label>Kabupaten / Kota<select name="city" id="city" required disabled><option value="">Pilih kabupaten/kota</option></select></label>
-          <label>Kecamatan<select name="district" id="district" required disabled><option value="">Pilih kecamatan</option></select></label>
-          <label>Layanan pengiriman<select name="shipping" required disabled><option value="">Klik Cek Ongkos Kirim</option></select></label>
+          <label class="field-product">Produk yang dipesan<select name="product" id="order-product" required><option value="">Pilih produk</option></select></label>
+          <label class="field-quantity">Jumlah<input name="quantity" type="number" min="1" value="1" required></label>
+          <label class="field-province">Provinsi<select name="province" id="province" required><option value="">Pilih provinsi</option></select></label>
+          <label class="field-city">Kabupaten / Kota<select name="city" id="city" required disabled><option value="">Pilih kabupaten/kota</option></select></label>
+          <label class="field-district">Kecamatan<select name="district" id="district" required disabled><option value="">Pilih kecamatan</option></select></label>
           <label class="wide">Alamat lengkap<input name="address" required placeholder="Nama jalan, nomor rumah, RT/RW, patokan"></label>
           <div class="wide destination-map-field">
             <span class="map-label">Titik lokasi penerima</span>
@@ -90,7 +89,7 @@
             <input type="hidden" name="destination_longitude" id="destination-longitude">
           </div>
         </div>
-        <div class="shipping-check-row"><button type="button" id="check-shipping-rate" class="primary-button">Cek Ongkos Kirim</button></div>
+        <div class="shipping-check-row"><label class="shipping-select-label">Layanan pengiriman<select name="shipping" required disabled><option value="">Klik Cek Ongkos Kirim</option></select></label><button type="button" id="check-shipping-rate" class="primary-button">Cek Ongkos Kirim</button></div>
         <div class="order-summary" aria-live="polite">
           <div><span>Harga produk</span><strong id="summary-product-price">—</strong></div>
           <div><span>Ongkir</span><strong id="summary-shipping">Belum tersedia</strong></div>
