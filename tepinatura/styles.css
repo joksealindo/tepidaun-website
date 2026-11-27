@@ -25,3 +25,13 @@
 .order-summary strong{font-size:13px;color:#1c1b17;text-align:right}
 .order-summary .summary-total{border-top:1px solid #d7ddd1;padding-top:13px;margin-top:2px;color:#1c1b17;font-weight:700}
 .order-summary .summary-total strong{font-size:17px}
+
+
+/* Recipient map for precise Biteship delivery coordinates */
+.destination-map-field{display:flex;flex-direction:column;gap:8px}
+.map-label{font-size:11px;color:#1c1b17}
+.map-help{font-size:11px;color:#7b8275;margin:0}
+#destination-map{height:300px;width:100%;border:1px solid #d7ddd1;border-radius:5px;z-index:1;background:#e6e8df}
+.map-location-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:#697160}
+.map-location-row button{border:1px solid #cfd6c8;background:#f7f6f0;color:#34432d;border-radius:4px;padding:8px 12px;font-size:11px;cursor:pointer}
+@media(max-width:720px){#destination-map{height:260px}.map-location-row{align-items:flex-start;flex-direction:column}}
