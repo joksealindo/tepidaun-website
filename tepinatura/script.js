@@ -361,9 +361,21 @@ async function getDestinationSubdistrict() {
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/^(kabupaten|kab\.?|kota administrasi|kota)\s+/i, '')
     .replace(/\s+/g, ' ');
-  let locations = await searchLocations(districtName);
-  if (!locations.length) locations = await searchLocations(districtName + ' ' + cityName);
-
+  const searchTerms = [districtName, districtName + ' ' + cityName, cityName];
+  const locationMap = new Map();
+  for (const term of searchTerms) {
+    const found = await searchLocations(term);
+    found.forEach(location => {
+      if (location.subdistrict_id) locationMap.set(String(location.subdistrict_id), location);
+    });
+    const exact = [...locationMap.values()].filter(location =>
+      normalize(location.subdistrict_name) === normalize(districtName) &&
+      normalize(location.city_name) === normalize(cityName) &&
+      normalize(location.province_name) === normalize(provinceName)
+    );
+    if (exact.length === 1) break;
+  }
+  const locations = [...locationMap.values()];
   const byDistrict = locations.filter(location =>
     normalize(location.subdistrict_name) === normalize(districtName) ||
     normalize(location.label).startsWith(normalize(districtName) + ',')
