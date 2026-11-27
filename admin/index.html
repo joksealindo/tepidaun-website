@@ -105,11 +105,11 @@
         <label class="full">Nama produk<input id="product-name" required maxlength="140" placeholder="Contoh: Kopi Arabika Temanggung"></label>
         <label>Kategori<select id="product-category" required><option value="">Memuat kategori…</option></select></label>
         <label>SKU <span class="optional">Opsional</span><input id="product-sku" maxlength="60" placeholder="TPN-001"></label>
-        <label>Harga jual (Rp)<input id="product-price" type="number" min="0" step="1" required value="0"></label>
-        <label>Harga sebelum diskon (Rp)<span class="optional">Opsional</span><input id="product-compare" type="number" min="0" step="1"></label>
-        <label>Stok<input id="product-stock" type="number" min="0" step="1" value="0" required></label>
-        <label>Urutan tampil<input id="product-order" type="number" step="1" value="0"></label>
-        <label class="full">Deskripsi singkat<textarea id="product-short" rows="2" maxlength="240" placeholder="Ringkasan produk untuk kartu katalog"></textarea></label>
+        <label>Harga jual (Rp)<input id="product-price" type="number" min="0" step="1" required placeholder="Masukkan harga"></label>
+        <label>Harga sebelum diskon (Rp)<span class="optional">Opsional</span><input id="product-compare" type="number" min="0" step="1" placeholder="Opsional"></label>
+        <label>Stok<input id="product-stock" type="number" min="0" step="1" required placeholder="Masukkan stok"></label>
+        <label>Urutan tampil<input id="product-order" type="number" step="1" placeholder="0"></label>
+        <label>Berat produk (gram)<input id="product-weight" type="number" min="1" step="1" required placeholder="Contoh: 1000"></label>
         <label class="full">Deskripsi produk<textarea id="product-description" rows="4" placeholder="Informasi lengkap produk"></textarea></label>
         <label class="full">Foto produk <span class="optional">JPG, PNG, WebP · Maksimal 5 MB</span><input id="product-image" type="file" accept="image/jpeg,image/png,image/webp"></label>
         <div id="image-preview" class="image-preview full" hidden></div>
@@ -120,6 +120,6 @@
     </form>
   </dialog>
   <div id="toast" class="toast" role="status"></div>
-  <script src="admin.js?v=20261126-2"></script>
+  <script src="admin.js?v=20261127-3"></script>
 </body>
 </html>
