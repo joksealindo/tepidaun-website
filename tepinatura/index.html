@@ -84,6 +84,11 @@
           <label>Kode pos<input name="postal" inputmode="numeric" placeholder="Kode pos"></label>
           <label>Catatan pesanan<input name="notes" placeholder="Opsional"></label>
         </div>
+        <div class="order-summary" aria-live="polite">
+          <div><span>Harga produk</span><strong id="summary-product-price">—</strong></div>
+          <div><span>Ongkir</span><strong id="summary-shipping">Menunggu tarif SPX</strong></div>
+          <div class="summary-total"><span>Total</span><strong id="summary-total">Menunggu ongkir</strong></div>
+        </div>
         <p class="form-note">Pilih provinsi, kabupaten/kota, dan kecamatan. Desa/kelurahan sementara diisi manual. Ketersediaan layanan SPX dan ongkos kirim akan dikonfirmasi sebelum pembayaran.</p>
         <button type="submit" class="primary-button">Kirim detail pesanan <span>›</span></button>
         <p class="form-feedback" id="form-feedback" role="status"></p>
@@ -100,6 +105,6 @@
     <button id="cart-checkout" class="primary-button" disabled>Lanjut ke pemesanan <span>›</span></button>
   </aside>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js?v=20261127-1"></script>
+  <script src="script.js?v=20261127-2"></script>
 </body>
 </html>
