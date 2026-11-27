@@ -40,3 +40,9 @@
 #destination-map{cursor:crosshair;touch-action:pan-x pan-y;pointer-events:auto}
 #destination-map .leaflet-container{cursor:crosshair}
 #destination-map .leaflet-marker-icon{cursor:grab}
+
+/* Explicit shipping quote action */
+.shipping-check-row{margin-top:18px;display:flex;justify-content:flex-start}
+.shipping-check-row .primary-button{min-width:190px}
+.shipping-check-row .primary-button:disabled{opacity:.6}
+@media(max-width:720px){.shipping-check-row .primary-button{width:100%}}
