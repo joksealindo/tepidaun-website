@@ -35,3 +35,8 @@
 .map-location-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:#697160}
 .map-location-row button{border:1px solid #cfd6c8;background:#f7f6f0;color:#34432d;border-radius:4px;padding:8px 12px;font-size:11px;cursor:pointer}
 @media(max-width:720px){#destination-map{height:260px}.map-location-row{align-items:flex-start;flex-direction:column}}
+
+/* Make recipient pin selection obvious and keep Leaflet interactive on touch screens */
+#destination-map{cursor:crosshair;touch-action:pan-x pan-y;pointer-events:auto}
+#destination-map .leaflet-container{cursor:crosshair}
+#destination-map .leaflet-marker-icon{cursor:grab}
