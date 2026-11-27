@@ -342,60 +342,44 @@ async function getDestinationSubdistrict() {
   const cacheKey = [provinceName, cityName, districtName].join('|').toLocaleLowerCase('id-ID');
   if (locationCache.has(cacheKey)) return locationCache.get(cacheKey);
 
-  const searchLocations = async query => {
-    const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_PUBLISHABLE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
-      },
-      body: JSON.stringify({ action: 'location_search', query })
-    });
-    const result = await response.json();
-    if (!response.ok || !result.success) throw new Error(result.error || 'Pencarian kecamatan ke layanan ongkir gagal.');
-    return result.locations || [];
-  };
+  const response = await fetch(SUPABASE_URL + '/functions/v1/shipping-rates', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_PUBLISHABLE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_PUBLISHABLE_KEY
+    },
+    body: JSON.stringify({ action: 'location_search', query: districtName })
+  });
+  const result = await response.json();
+  if (!response.ok || !result.success) throw new Error(result.error || 'Pencarian lokasi ke layanan ongkir gagal.');
 
   const normalize = value => String(value || '').trim().toLocaleLowerCase('id-ID')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/^(kabupaten|kab\.?|kota administrasi|kota)\s+/i, '')
     .replace(/\s+/g, ' ');
-  const searchTerms = [districtName, districtName + ' ' + cityName, cityName];
-  const locationMap = new Map();
-  for (const term of searchTerms) {
-    const found = await searchLocations(term);
-    found.forEach(location => {
-      if (location.subdistrict_id) locationMap.set(String(location.subdistrict_id), location);
-    });
-    const exact = [...locationMap.values()].filter(location =>
-      normalize(location.subdistrict_name) === normalize(districtName) &&
-      normalize(location.city_name) === normalize(cityName) &&
-      normalize(location.province_name) === normalize(provinceName)
-    );
-    if (exact.length === 1) break;
-  }
-  const locations = [...locationMap.values()];
-  const byDistrict = locations.filter(location =>
-    normalize(location.subdistrict_name) === normalize(districtName) ||
-    normalize(location.label).startsWith(normalize(districtName) + ',')
+  const matches = (result.locations || []).filter(location =>
+    normalize(location.district) === normalize(districtName) &&
+    normalize(location.city) === normalize(cityName) &&
+    normalize(location.province) === normalize(provinceName)
   );
-  const matches = byDistrict.filter(location =>
-    normalize(location.city_name) === normalize(cityName) &&
-    normalize(location.province_name) === normalize(provinceName)
-  );
-  const selectedMatches = matches.length ? matches : (byDistrict.length === 1 ? byDistrict : []);
-  if (selectedMatches.length !== 1) {
-    const candidates = locations.slice(0, 8).map(location =>
-      location.label || [location.subdistrict_name, location.city_name, location.province_name].filter(Boolean).join(', ')
+  if (matches.length !== 1) {
+    const candidates = (result.locations || []).slice(0, 8).map(location =>
+      location.label || [location.district, location.city, location.province].filter(Boolean).join(', ')
     );
-    const detail = candidates.length ? ' Kandidat API: ' + candidates.join(' | ') : ' API tidak mengembalikan hasil untuk: ' + districtName + ' ' + cityName;
-    throw new Error('Kecamatan belum dapat dipetakan secara pasti.' + detail);
+    const detail = candidates.length ? ' Kandidat API: ' + candidates.join(' | ') : ' API tidak mengembalikan hasil untuk: ' + districtName;
+    throw new Error(matches.length
+      ? 'Lokasi tujuan ditemukan lebih dari satu.' + detail
+      : 'Lokasi kecamatan belum cocok dengan data layanan ongkir.' + detail);
   }
-  const selected = selectedMatches[0];
-  if (!selected.subdistrict_id) throw new Error('Hasil lokasi tidak memiliki ID kecamatan. Hasil: ' + (selected.label || 'tanpa label'));
-  locationCache.set(cacheKey, selected);
-  return selected;
+  const selected = matches[0];
+  const destination = {
+    province: selected.province,
+    city: selected.city,
+    district: selected.district
+  };
+  locationCache.set(cacheKey, destination);
+  return destination;
 }
 async function fetchShippingQuote() {
   const {product, quantity} = selectedProductAndQuantity();
@@ -417,7 +401,7 @@ async function fetchShippingQuote() {
   shippingQuoteLoading = true;
   shippingSelect.disabled = true;
   shippingSelect.innerHTML = '<option value="">Menghitung ongkir SPX Reguler…</option>';
-  $('#form-feedback').textContent = 'Mencari kecamatan dan menghitung ongkir SPX Reguler…';
+  $('#form-feedback').textContent = 'Mencari data wilayah dan menghitung ongkir SPX Reguler…';
   updateOrderSummary();
 
   try {
@@ -432,8 +416,7 @@ async function fetchShippingQuote() {
       },
       body: JSON.stringify({
         action: 'rate',
-        destination_subdistrict_id: destination.subdistrict_id,
-        destination_subdistrict_name: destination.subdistrict_name,
+        destination,
         weight: Math.ceil(Number(product.weightGrams) * quantity)
       })
     });
