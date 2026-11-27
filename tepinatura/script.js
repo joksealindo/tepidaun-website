@@ -522,7 +522,7 @@ quantityInput.addEventListener('input', () => {
 });
 provinceSelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
 citySelect.addEventListener('change', () => { locationCache.clear(); scheduleShippingQuote(); });
-districtSelect.addEventListener('change', scheduleShippingQuote);\n
+districtSelect.addEventListener('change', scheduleShippingQuote);
 shippingSelect.addEventListener('change', () => {
   currentShippingRate = availableShippingRates.find(rate =>
     rate.service_code === shippingSelect.value
