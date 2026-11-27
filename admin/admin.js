@@ -116,7 +116,7 @@ function renderProducts(){
 }
 $("#product-search").addEventListener("input",renderProducts);$("#category-filter").addEventListener("change",renderProducts);$("#status-filter").addEventListener("change",renderProducts);
 function resetForm(){
- $("#product-form").reset();$("#product-id").value="";$("#product-price").value="0";$("#product-stock").value="0";$("#product-order").value="0";$("#image-preview").hidden=true;$("#image-preview").innerHTML="";$("#form-message").textContent="";state.imagePath=null;$("#dialog-title").textContent="Tambah produk";
+ $("#product-form").reset();$("#product-id").value="";$("#image-preview").hidden=true;$("#image-preview").innerHTML="";$("#form-message").textContent="";state.imagePath=null;$("#dialog-title").textContent="Tambah produk";
 }
 function openProductDialog(){resetForm();$("#product-dialog").showModal()}
 $("#add-product").addEventListener("click",openProductDialog);
@@ -124,7 +124,7 @@ $("#close-dialog").addEventListener("click",()=>$("#product-dialog").close());
 $("#cancel-dialog").addEventListener("click",()=>$("#product-dialog").close());
 function editProduct(id){
  const p=state.products.find(x=>x.id===id);if(!p)return;resetForm();
- $("#dialog-title").textContent="Edit produk";$("#product-id").value=p.id;$("#product-name").value=p.name;$("#product-category").value=p.category_id;$("#product-sku").value=p.sku||"";$("#product-price").value=p.price;$("#product-compare").value=p.compare_at_price??"";$("#product-stock").value=p.stock;$("#product-order").value=p.sort_order;$("#product-short").value=p.short_description||"";$("#product-description").value=p.description||"";$("#product-published").checked=p.is_published;state.imagePath=p.image_path;
+ $("#dialog-title").textContent="Edit produk";$("#product-id").value=p.id;$("#product-name").value=p.name;$("#product-category").value=p.category_id;$("#product-sku").value=p.sku||"";$("#product-price").value=p.price;$("#product-compare").value=p.compare_at_price??"";$("#product-stock").value=p.stock;$("#product-order").value=p.sort_order??"";$("#product-weight").value=p.weight_grams||"";$("#product-description").value=p.description||"";$("#product-published").checked=p.is_published;state.imagePath=p.image_path;
  if(p.image_path){const url=client.storage.from("product-images").getPublicUrl(p.image_path).data.publicUrl;$("#image-preview").innerHTML='<img src="'+url+'" alt="Foto produk saat ini">';$("#image-preview").hidden=false}
  $("#product-dialog").showModal();
 }
@@ -143,7 +143,7 @@ async function deleteProduct(id){
 $("#product-form").addEventListener("submit",async e=>{
  e.preventDefault();const save=$("#save-product");save.disabled=true;save.textContent="Menyimpan…";$("#form-message").textContent="";
  try{
-  const name=$("#product-name").value.trim(),category_id=$("#product-category").value,id=$("#product-id").value||null;
+  const name=$("#product-name").value.trim(),category_id=$("#product-category").value,id=$("#product-id").value||null;\n  const weightGrams=Number($("#product-weight").value);\n  if(!Number.isInteger(weightGrams)||weightGrams<1)throw new Error("Masukkan berat produk dalam gram (minimal 1 gram).");
   if(!category_id){throw new Error("Pilih kategori produk terlebih dahulu.");}
   let imagePath=state.imagePath;
   const file=$("#product-image").files[0];
@@ -152,7 +152,7 @@ $("#product-form").addEventListener("submit",async e=>{
    const {error:uploadError}=await client.storage.from("product-images").upload(path,file,{upsert:false,contentType:file.type});
    if(uploadError)throw uploadError;imagePath=path;
   }
-  const record={category_id,name,slug:slugify(name)+(id?"-"+id.slice(0,6):""),sku:$("#product-sku").value.trim()||null,short_description:$("#product-short").value.trim()||null,description:$("#product-description").value.trim()||null,price:Number($("#product-price").value),compare_at_price:$("#product-compare").value?Number($("#product-compare").value):null,stock:Number($("#product-stock").value),image_path:imagePath,is_published:$("#product-published").checked,sort_order:Number($("#product-order").value)};
+  const record={category_id,name,slug:slugify(name)+(id?"-"+id.slice(0,6):""),sku:$("#product-sku").value.trim()||null,description:$("#product-description").value.trim()||null,price:Number($("#product-price").value),compare_at_price:$("#product-compare").value?Number($("#product-compare").value):null,stock:Number($("#product-stock").value),weight_grams:weightGrams,image_path:imagePath,is_published:$("#product-published").checked,sort_order:Number($("#product-order").value)};
   const result=id?await client.from("products").update(record).eq("id",id):await client.from("products").insert(record);
   if(result.error)throw result.error;
   $("#product-dialog").close();notify("Produk berhasil disimpan.");await loadCatalog();
