@@ -81,7 +81,7 @@
           <label>Kecamatan<select name="district" id="district" required disabled><option value="">Pilih kecamatan</option></select></label>
           <label>Desa / Kelurahan<input name="village" id="village" required placeholder="Ketik nama desa/kelurahan"></label>
           <label class="wide">Alamat lengkap<input name="address" required placeholder="Nama jalan, nomor rumah, RT/RW, patokan"></label>
-          <label>Kode pos<input name="postal" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required placeholder="5 digit kode pos"></label>
+          <label>Kode pos<input name="postal" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="Opsional"></label>
           <label>Catatan pesanan<input name="notes" placeholder="Opsional"></label>
         </div>
         <div class="order-summary" aria-live="polite">
@@ -89,7 +89,7 @@
           <div><span>Ongkir</span><strong id="summary-shipping">Menunggu tarif SPX</strong></div>
           <div class="summary-total"><span>Total</span><strong id="summary-total">Menunggu ongkir</strong></div>
         </div>
-        <p class="form-note">Isi kode pos tujuan untuk menghitung ongkir SPX Reguler secara otomatis. Berat paket dihitung dari berat produk dan jumlah yang dipesan.</p>
+        <p class="form-note">Pilih kecamatan tujuan untuk menghitung ongkir SPX Reguler secara otomatis. Kode pos opsional. Berat paket dihitung dari berat produk dan jumlah yang dipesan.</p>
         <button type="submit" class="primary-button">Kirim detail pesanan <span>›</span></button>
         <p class="form-feedback" id="form-feedback" role="status"></p>
       </form>
@@ -105,6 +105,6 @@
     <button id="cart-checkout" class="primary-button" disabled>Lanjut ke pemesanan <span>›</span></button>
   </aside>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js?v=20261127-5"></script>
+  <script src="script.js?v=20261127-6"></script>
 </body>
 </html>
