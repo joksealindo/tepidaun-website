@@ -82,9 +82,9 @@
           <label class="wide">Alamat lengkap<input name="address" required placeholder="Nama jalan, nomor rumah, RT/RW, patokan"></label>
           <div class="wide destination-map-field">
             <span class="map-label">Titik lokasi penerima</span>
-            <p class="map-help">Geser peta lalu klik lokasi rumah atau titik penerimaan paket.</p>
+            <div class="map-instruction-row"><p class="map-help">Geser peta lalu klik / tap lokasi penerima</p><button type="button" id="use-current-location">Gunakan Lokasi Saya</button></div>
             <div id="destination-map" role="application" aria-label="Peta untuk memilih lokasi penerima"></div>
-            <div class="map-location-row"><span id="destination-coordinates">Belum memilih titik lokasi</span><button type="button" id="use-current-location">Gunakan lokasi saya</button></div>
+            <div class="map-location-row"><span id="destination-coordinates">Belum memilih titik lokasi</span></div>
             <input type="hidden" name="destination_latitude" id="destination-latitude">
             <input type="hidden" name="destination_longitude" id="destination-longitude">
           </div>
