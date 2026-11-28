@@ -62,3 +62,9 @@
 .map-instruction-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
 .map-instruction-row .map-help{flex:1;min-width:0}
 .map-instruction-row button{flex:0 0 auto;border:1px solid #cfd6c8;background:#f7f6f0;color:#34432d;border-radius:7px;padding:8px 12px;font-size:11px;cursor:pointer}
+
+/* Keep map title and instruction together on the lower text row */
+.map-instruction-row{display:flex;align-items:center;justify-content:flex-start;gap:7px}
+.map-instruction-row .map-label,.map-instruction-row .map-help{flex:0 0 auto;min-width:0}
+.map-instruction-row .map-instruction-separator{font-size:11px;color:#7b8275;line-height:1}
+.map-instruction-row button{margin-left:auto}
