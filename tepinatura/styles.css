@@ -74,3 +74,6 @@
 
 /* Initial map location hint color */
 .map-location-row{color:#953907}
+
+/* Reserve the location-status row height after its text is cleared */
+.map-location-row{min-height:14px}
