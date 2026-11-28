@@ -71,3 +71,6 @@
 
 /* Mobile map heading: keep the instruction compact across two lines */
 @media(max-width:720px){.map-instruction-row{gap:5px;align-items:center}.map-instruction-row .map-help{line-height:1.05}.map-instruction-row button{padding:7px 9px;white-space:nowrap}}
+
+/* Initial map location hint color */
+.map-location-row{color:#953907}
