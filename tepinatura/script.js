@@ -110,7 +110,8 @@ function renderProducts(list = products) {
       if (product.image) img.src = product.image;
       img.alt = product.name;
       card.querySelector('h3').textContent = product.name;
-      card.querySelector('.product-price').textContent = formatPrice(product.price);
+      const formattedPrice = formatPrice(product.price).replace(/^Rp\s*/, '');
+      card.querySelector('.product-price').innerHTML = '<span class="price-currency">Rp</span><span class="price-amount">' + formattedPrice + '</span>';
       card.querySelector('.buy-now').addEventListener('click', () => selectProduct(product.id));
       card.querySelector('.add-cart').addEventListener('click', () => addToCart(product.id));
       rail.append(card);
