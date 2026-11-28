@@ -68,3 +68,6 @@
 .map-instruction-row .map-label,.map-instruction-row .map-help{flex:0 0 auto;min-width:0}
 .map-instruction-row .map-instruction-separator{font-size:11px;color:#7b8275;line-height:1}
 .map-instruction-row button{margin-left:auto}
+
+/* Mobile map heading: keep the instruction compact across two lines */
+@media(max-width:720px){.map-instruction-row{gap:5px;align-items:center}.map-instruction-row .map-help{line-height:1.05}.map-instruction-row button{padding:7px 9px;white-space:nowrap}}
