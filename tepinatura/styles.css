@@ -77,3 +77,9 @@
 
 /* Reserve the location-status row height after its text is cleared */
 .map-location-row{min-height:14px}
+
+
+/* Match the gap after product cards to the hero-to-first-category gap */
+.category{padding-bottom:0}
+.category + .category{padding-top:0}
+.product-rail{padding-bottom:28px}
