@@ -57,3 +57,8 @@
 
 /* Desktop: shipping selector fills the space to the right of the quote button */
 @media(min-width:721px){.shipping-check-row{grid-template-columns:190px minmax(0,1fr)}.shipping-check-row .primary-button{width:190px;min-width:190px}.shipping-select-label{width:100%;min-width:0}}
+
+/* Keep map instruction and current-location action on one row */
+.map-instruction-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.map-instruction-row .map-help{flex:1;min-width:0}
+.map-instruction-row button{flex:0 0 auto;border:1px solid #cfd6c8;background:#f7f6f0;color:#34432d;border-radius:7px;padding:8px 12px;font-size:11px;cursor:pointer}
