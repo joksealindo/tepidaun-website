@@ -18,7 +18,7 @@
 .product-info{padding:10px}.product-info h3{font-size:14px;font-weight:500;color:#1c1b17;margin:0 0 8px}.product-info p{font-size:11px;line-height:1.5;color:var(--muted);min-height:32px;margin:0 0 13px}
 .product-actions{display:flex;gap:7px}.product-actions button{height:34px;border-radius:7px;font-size:12px;cursor:pointer}.buy-now{flex:1;border:0;background:var(--green);color:white}.add-cart{width:36px;display:grid;place-items:center;border:1px solid #cfd6c8;background:#f0f0e9;color:var(--green)}.add-cart svg{width:18px;height:18px;display:block}
 
-.product-price{display:block;font-size:13px;font-weight:700;color:#1c1b17;margin:0 0 10px}
+.product-price{display:block;margin:0 0 10px;line-height:1.2}.product-price .price-currency{font-size:11px;font-weight:400;color:#1c1b17;margin-right:3px}.product-price .price-amount{font-size:15px;font-weight:700;color:#d13600}
 
 .order-summary{margin:22px 0 17px;padding:17px 18px;background:#f7f6f0;border:1px solid #d7ddd1;border-radius:7px;display:grid;gap:12px}
 .order-summary>div{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:12px;color:#55594c}
