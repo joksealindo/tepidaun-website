@@ -306,7 +306,7 @@ function setDestinationPoint(latlng, panTo = false) {
   destinationPoint = { latitude: Number(latlng.lat), longitude: Number(latlng.lng) };
   destinationLatInput.value = destinationPoint.latitude.toFixed(6);
   destinationLngInput.value = destinationPoint.longitude.toFixed(6);
-  $('#destination-coordinates').textContent = destinationPoint.latitude.toFixed(6) + ', ' + destinationPoint.longitude.toFixed(6);
+  $('#destination-coordinates').textContent = '';
 
   if (!destinationMarker) {
     destinationMarker = L.marker(latlng, { draggable: true }).addTo(destinationMap);
